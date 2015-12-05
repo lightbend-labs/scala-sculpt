@@ -1,0 +1,4 @@
+<plugin>
+  <name>scala-sculpt</name>
+  <classname>scala.tools.sculpt.plugin.SculptPlugin</classname>
+</plugin>
