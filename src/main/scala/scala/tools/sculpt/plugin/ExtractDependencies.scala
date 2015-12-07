@@ -56,11 +56,11 @@ abstract class ExtractDependencies extends PluginComponent {
       def unapply(tree: Tree): Option[Tree] =
         tree.attachments.all.collect {
           case att: analyzer.MacroExpansionAttachment => att.expandee
-        } headOption
+        }.headOption
     }
 
     // skip packages
-    private def symbolsInType(tp: Type) = (tp collect { case tp if !(tp.typeSymbol hasFlag PACKAGE) => tp.typeSymbolDirect } toSet)
+    private def symbolsInType(tp: Type) = tp.collect{ case tp if !(tp.typeSymbol hasFlag PACKAGE) => tp.typeSymbolDirect }.toSet
     private def flattenTypeToSymbols(tp: Type): List[Symbol] = tp match {
       case ct: CompoundType => ct.typeSymbolDirect :: ct.parents.flatMap(flattenTypeToSymbols)
       case _ => List(tp.typeSymbolDirect)

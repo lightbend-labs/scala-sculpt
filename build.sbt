@@ -8,6 +8,15 @@ scalaVersion  := "2.11.7"
 
 libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided"
 
+scalacOptions ++= Seq(
+  "-deprecation",
+  "-unchecked",
+  "-feature",
+  "-Xlint",
+  "-Ywarn-value-discard",
+  "-Xfatal-warnings"
+)
+
 pomExtra := (<scm>
   <url>https://github.com/typesafehub/scala-sculpt.git</url>
   <connection>scm:https://github.com/typesafehub/scala-sculpt.git</connection></scm>)
