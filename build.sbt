@@ -8,6 +8,8 @@ scalaVersion  := "2.11.7"
 
 libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided"
 
+libraryDependencies += "io.spray" %%  "spray-json" % "1.3.2"
+
 scalacOptions ++= Seq(
   "-deprecation",
   "-unchecked",

@@ -1,9 +1,13 @@
 package scala.tools.sculpt.plugin
 
 import scala.collection.mutable
+import scala.collection.mutable.HashSet
 import scala.tools.nsc
 import nsc.plugins._
 import scala.reflect.internal.Flags.{PACKAGE}
+import scala.tools.sculpt.model._
+import spray.json._
+import scala.tools.sculpt.model.ModelJsonProtocol._
 
 // adapted from the incremental compiler
 abstract class ExtractDependencies extends PluginComponent {
@@ -17,23 +21,44 @@ abstract class ExtractDependencies extends PluginComponent {
   /** Create a new phase which applies transformer */
   def newPhase(prev: nsc.Phase): StdPhase = new Phase(prev)
 
+  type MultiMapIterator = Iterator[(Symbol, HashSet[Symbol])]
+
   /** The phase defined by this transform */
   class Phase(prev: nsc.Phase) extends StdPhase(prev) {
-    def apply(unit: CompilationUnit) = {
-      val extractDependenciesTraverser = new ExtractDependenciesTraverser
-      extractDependenciesTraverser.traverse(unit.body)
+    private var extractDependenciesTraverser: ExtractDependenciesTraverser = null
+
+    override def run(): Unit = {
+      extractDependenciesTraverser = new ExtractDependenciesTraverser
+      super.run
       val deps = extractDependenciesTraverser.dependencies
-      deps foreach { case (from, tos) => println(s"REG $from --> $tos")}
       val inheritDeps = extractDependenciesTraverser.inheritanceDependencies
-      inheritDeps foreach { case (from, tos) => println(s"INH $from --> $tos")}
+      extractDependenciesTraverser = null
+      val fullDependencies =
+        (createFullDependencies(deps, DependencyKind.Uses) ++ createFullDependencies(inheritDeps, DependencyKind.Extends))
+          .groupBy(identity).map { case (d, l) =>
+            val count = l.size
+            if(count == 1) d else d.copy(count = Some(count))
+          }.toSeq.sortBy(_.toString)
+      val json = fullDependencies.toJson
+      println(FullDependenciesPrinter(json))
+    }
+
+    def apply(unit: CompilationUnit) = extractDependenciesTraverser.traverse(unit.body)
+
+    def createFullDependencies(syms: MultiMapIterator, kind: DependencyKind.Value): Seq[FullDependency] = {
+      def entitiesFor(s: Symbol) =
+        s.ownerChain.reverse.dropWhile(s => s.isEffectiveRoot || s.isEmptyPackage).map(Entity.forSymbol _)
+      (for {
+        (from, tos) <- syms
+        fromEntities = entitiesFor(from)
+        to <- tos
+      } yield FullDependency(fromEntities, entitiesFor(to), kind, None)).toSeq
     }
   }
 
   private class ExtractDependenciesTraverser extends Traverser {
     import collection.mutable.{HashMap, HashSet}
     private def emptyMultiMap: mutable.Map[Symbol, HashSet[Symbol]] = HashMap.empty[Symbol, HashSet[Symbol]].withDefault( _ => HashSet.empty[Symbol])
-
-    type MultiMapIterator = Iterator[(Symbol, HashSet[Symbol])]
 
     private val deps = emptyMultiMap
     protected def addDependency(dep: Symbol): Unit = if (dep ne NoSymbol) deps(currentOwner) +== dep
