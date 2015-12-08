@@ -2,16 +2,21 @@ package scala.tools.sculpt.plugin
 
 import scala.collection.mutable
 import scala.collection.mutable.HashSet
+import scala.io.Codec
 import scala.tools.nsc
 import nsc.plugins._
 import scala.reflect.internal.Flags.{PACKAGE}
 import scala.tools.sculpt.model._
 import spray.json._
 import scala.tools.sculpt.model.ModelJsonProtocol._
+import java.io.File
 
 // adapted from the incremental compiler
 abstract class ExtractDependencies extends PluginComponent {
   import global._
+
+  /** The output file to write to, or None for stdout */
+  def outputPath: Option[File]
 
   override def description = "Extract Dependency Phase for Scala Sculpt"
 
@@ -40,10 +45,17 @@ abstract class ExtractDependencies extends PluginComponent {
             if(count == 1) d else d.copy(count = Some(count))
           }.toSeq.sortBy(_.toString)
       val json = fullDependencies.toJson
-      println(FullDependenciesPrinter(json))
+      writeOutput(FullDependenciesPrinter(json))
     }
 
     def apply(unit: CompilationUnit) = extractDependenciesTraverser.traverse(unit.body)
+
+    def writeOutput(s: String): Unit = {
+      outputPath match {
+        case Some(f) => new scala.reflect.io.File(f)(Codec.UTF8).writeAll(s)
+        case None => print(s)
+      }
+    }
 
     def createFullDependencies(syms: MultiMapIterator, kind: DependencyKind.Value): Seq[FullDependency] = {
       def entitiesFor(s: Symbol) =
