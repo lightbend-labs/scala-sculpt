@@ -6,9 +6,8 @@ import scala.tools.nsc
 import nsc.Global
 import nsc.plugins.Plugin
 import nsc.plugins.PluginComponent
+import scala.tools.sculpt.util.RegexInterpolator
 
-// after `compile` and `copyResources`,
-// use as `scalac -Xplugin:~/git/scala-sculpt/target/scala-2.11/classes -Xplugin-require:sculpt`
 class SculptPlugin(val global: Global) extends Plugin {
   val name        = "sculpt"
   val description = "Aid in modularizing big code bases"
@@ -27,9 +26,6 @@ class SculptPlugin(val global: Global) extends Plugin {
   )
 
   override def init(options: List[String], error: String => Unit) = {
-    implicit class Regex(sc: StringContext) {
-      def r = new util.matching.Regex(sc.parts.mkString, sc.parts.tail.map(_ => "x"): _*)
-    }
     options.foreach {
       case r"out=(.*)$out" => extractDependencies.outputPath = Some(new File(out))
       case arg => error(s"Bad argument: $arg")

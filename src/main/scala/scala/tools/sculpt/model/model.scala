@@ -2,15 +2,27 @@ package scala.tools.sculpt.model
 
 import scala.reflect.internal.Symbols
 
-object EntityKind extends Enumeration {
-  val Trait, Class, Type, Var, Package, Object, Constructor, Def, Val, Unknown = Value
+sealed trait EntityKind
+object EntityKind {
+  case object Trait extends EntityKind
+  case object Class extends EntityKind
+  case object Type extends EntityKind
+  case object Var extends EntityKind
+  case object Package extends EntityKind
+  case object Object extends EntityKind
+  case object Constructor extends EntityKind
+  case object Def extends EntityKind
+  case object Val extends EntityKind
+  case object Unknown extends EntityKind
 }
 
-object DependencyKind extends Enumeration {
-  val Extends, Uses = Value
+sealed trait DependencyKind
+object DependencyKind {
+  case object Extends extends DependencyKind
+  case object Uses extends DependencyKind
 }
 
-case class Entity(name: String, kind: EntityKind.Value) {
+case class Entity(name: String, kind: EntityKind) {
   override def toString = "(" + kind.toString.toLowerCase + ")" + name
 }
 
@@ -30,7 +42,7 @@ object Entity {
   }
 }
 
-case class FullDependency(from: Seq[Entity], to: Seq[Entity], kind: DependencyKind.Value, count: Option[Int]) {
+case class FullDependency(from: Seq[Entity], to: Seq[Entity], kind: DependencyKind, count: Int) {
   override def toString =
-    from.mkString(".") + " " + kind.toString.toLowerCase + " " + to.mkString(".") + count.map(c => s" [x$c]").getOrElse("")
+    from.mkString(".") + " " + kind.toString.toLowerCase + " " + to.mkString(".") + s" [$count]"
 }

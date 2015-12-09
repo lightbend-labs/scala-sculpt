@@ -40,10 +40,8 @@ abstract class ExtractDependencies extends PluginComponent {
       extractDependenciesTraverser = null
       val fullDependencies =
         (createFullDependencies(deps, DependencyKind.Uses) ++ createFullDependencies(inheritDeps, DependencyKind.Extends))
-          .groupBy(identity).map { case (d, l) =>
-            val count = l.size
-            if(count == 1) d else d.copy(count = Some(count))
-          }.toSeq.sortBy(_.toString)
+          .filterNot(d => d.from == d.to)
+          .groupBy(identity).map { case (d, l) => d.copy(count = l.size) }.toSeq.sortBy(_.toString)
       val json = fullDependencies.toJson
       writeOutput(FullDependenciesPrinter(json))
     }
@@ -57,14 +55,14 @@ abstract class ExtractDependencies extends PluginComponent {
       }
     }
 
-    def createFullDependencies(syms: MultiMapIterator, kind: DependencyKind.Value): Seq[FullDependency] = {
+    def createFullDependencies(syms: MultiMapIterator, kind: DependencyKind): Seq[FullDependency] = {
       def entitiesFor(s: Symbol) =
         s.ownerChain.reverse.dropWhile(s => s.isEffectiveRoot || s.isEmptyPackage).map(Entity.forSymbol _)
       (for {
         (from, tos) <- syms
         fromEntities = entitiesFor(from)
         to <- tos
-      } yield FullDependency(fromEntities, entitiesFor(to), kind, None)).toSeq
+      } yield FullDependency(fromEntities, entitiesFor(to), kind, 1)).toSeq
     }
   }
 
