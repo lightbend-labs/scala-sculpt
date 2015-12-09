@@ -1,0 +1,15 @@
+# opt-in to Travis new infrastructure
+sudo: false
+
+# cache stuff, hopefully shortening build times
+cache:
+  directories:
+  - $HOME/.ivy2
+  - $HOME/.sbt/boot
+  - $HOME/.sbt/launchers
+
+jdk: oraclejdk8
+language: scala
+
+script:
+  - sbt test
