@@ -6,9 +6,14 @@ homepage      := Some(url("http://github.com/typesafehub/scala-sculpt"))
 
 scalaVersion  := "2.11.7"
 
-libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided"
+libraryDependencies ++= Seq(
+  "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
+  "io.spray" %% "spray-json" % "1.3.2",
+  "junit" % "junit" % "4.12" % "test",
+  "com.novocode" % "junit-interface" % "0.11" % "test"
+)
 
-libraryDependencies += "io.spray" %%  "spray-json" % "1.3.2"
+fork in Test := true
 
 scalacOptions ++= Seq(
   "-deprecation",
