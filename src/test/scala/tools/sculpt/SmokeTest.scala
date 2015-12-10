@@ -1,3 +1,5 @@
+package scala.tools.sculpt
+
 import scala.tools.nsc.{ Settings, Global }
 import scala.tools.nsc.io.VirtualDirectory
 import scala.reflect.internal.util.BatchSourceFile
@@ -35,15 +37,8 @@ import org.junit.Test
 import org.junit.Assert.assertEquals
 
 class SmokeTest {
-
-  @Test def test(): Unit = {
-    val expected =
-      """|[
-         |  {"sym": ["cl:O"], "extends": ["pck:scala", "t:AnyRef"]},
-         |  {"sym": ["cl:O", "cons"], "uses": ["cl:O"]},
-         |  {"sym": ["cl:O", "cons"], "uses": ["pck:java", "pck:lang", "cl:Object", "cons"]}
-         |]""".stripMargin
-    assertEquals(expected, Scaffold.analyze("object O"))
+  @Test def generate(): Unit = {
+    assertEquals(Samples.json1,
+      Scaffold.analyze(Samples.source1))
   }
-
 }
