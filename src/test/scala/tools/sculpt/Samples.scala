@@ -5,9 +5,9 @@ object Samples {
   val source1 = "object O"
   val json1 =
     """|[
-       |  {"sym": ["cl:O"], "extends": ["pck:scala", "t:AnyRef"]},
-       |  {"sym": ["cl:O", "cons"], "uses": ["cl:O"]},
-       |  {"sym": ["cl:O", "cons"], "uses": ["pck:java", "pck:lang", "cl:Object", "cons"]}
+       |  {"sym": ["o:O"], "extends": ["pck:scala", "t:AnyRef"]},
+       |  {"sym": ["o:O", "cons"], "uses": ["o:O"]},
+       |  {"sym": ["o:O", "cons"], "uses": ["pck:java", "pck:lang", "cl:Object", "cons"]}
        |]""".stripMargin
 
 }
