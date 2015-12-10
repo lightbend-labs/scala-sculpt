@@ -19,17 +19,27 @@ class SerializationTests {
   }
 
   // JSON -> JSValue -> JSON
-  @Test def roundTripThroughJsonASTs(): Unit = {
-    assertEquals(Samples.json1,
-      print(Samples.json1.parseJson))
+  def roundTripThroughJsonASTs(sample: Sample): Unit = {
+    assertEquals(sample.json,
+      print(sample.json.parseJson))
   }
 
   // JSON -> JSValue -> Seq[FullDependency] -> JSValue -> JSON
-  @Test def roundTripThroughModel(): Unit = {
+  def roundTripThroughModel(sample: Sample): Unit = {
     import ModelJsonProtocol._
     val dependencies =
-      Samples.json1.parseJson.convertTo[Seq[FullDependency]]
-    assertEquals(Samples.json1, print(dependencies.toJson))
+      sample.json.parseJson.convertTo[Seq[FullDependency]]
+    assertEquals(sample.json, print(dependencies.toJson))
   }
+
+  @Test def sample1a(): Unit =
+    roundTripThroughJsonASTs(Sample.sample1)
+  @Test def sample1b(): Unit =
+    roundTripThroughModel(Sample.sample1)
+
+  @Test def sample2a(): Unit =
+    roundTripThroughJsonASTs(Sample.sample2)
+  @Test def sample2b(): Unit =
+    roundTripThroughModel(Sample.sample2)
 
 }

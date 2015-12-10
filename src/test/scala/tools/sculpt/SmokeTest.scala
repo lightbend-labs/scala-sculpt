@@ -37,8 +37,14 @@ import org.junit.Test
 import org.junit.Assert.assertEquals
 
 class SmokeTest {
-  @Test def generate(): Unit = {
-    assertEquals(Samples.json1,
-      Scaffold.analyze(Samples.source1))
+  @Test def generate1(): Unit = {
+    val s = Sample.sample1
+    assertEquals(s.json,
+      Scaffold.analyze(s.source))
+  }
+  @Test def generate2(): Unit = {
+    val s = Sample.sample2
+    assertEquals(s.json,
+      Scaffold.analyze(s.source))
   }
 }
