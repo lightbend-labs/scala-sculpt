@@ -84,8 +84,10 @@ trait Edge {
 }
 
 class Graph(val name: String) { graph =>
-  private val nodesMap = mutable.Map[Path, Node]()
-  private val edgesSet = mutable.Set[Edge]()
+
+  // use LinkedHash* for deterministic ordering, for ease of testing
+  private val nodesMap = mutable.LinkedHashMap[Path, Node]()
+  private val edgesSet = mutable.LinkedHashSet[Edge]()
 
   def nodes: Iterable[Node] = nodesMap.values
   def edges: Iterable[Edge] = edgesSet
@@ -93,8 +95,8 @@ class Graph(val name: String) { graph =>
   def addNode(path: Path): Node = nodesMap.getOrElseUpdate(path, new GraphNode(path))
 
   private[this] class GraphNode(val path: Path) extends Node { self =>
-    val in = mutable.Map[(Node, DependencyKind), Edge]()
-    val out = mutable.Map[(Node, DependencyKind), Edge]()
+    val in = mutable.LinkedHashMap[(Node, DependencyKind), Edge]()
+    val out = mutable.LinkedHashMap[(Node, DependencyKind), Edge]()
     var dead = false
     def ensureNotDead[T](v: => T): T =
       if(dead) throw new IllegalStateException(s"Node '$this' has been removed from the graph")
