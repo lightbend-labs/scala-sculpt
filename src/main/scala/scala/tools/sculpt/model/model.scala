@@ -36,10 +36,10 @@ object Entity {
   def forSymbol(sym: Symbols#Symbol): Entity = {
     val kind = if(sym.isJavaInterface || sym.isTrait && !sym.isImplClass) EntityKind.Trait
       else if(sym.hasPackageFlag) EntityKind.Package
+      else if(sym.isModuleClass) EntityKind.Object
       else if(sym.isClass) EntityKind.Class
       else if(sym.isType && !sym.isParameter) EntityKind.Type
       else if(sym.isVariable) EntityKind.Var
-      else if(sym.isModule) EntityKind.Object
       else if(sym.isClassConstructor) EntityKind.Constructor
       else if(sym.isSourceMethod) EntityKind.Def
       else if(sym.isTerm && (!sym.isParameter || sym.isParamAccessor)) EntityKind.Val
