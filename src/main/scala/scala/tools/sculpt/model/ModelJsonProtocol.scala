@@ -8,16 +8,8 @@ object ModelJsonProtocol extends DefaultJsonProtocol {
 
   implicit object entityFormat extends JsonFormat[Entity] {
     def write(e: Entity) = new JsString(e.kind match {
-      case EntityKind.Trait       => "tr:" + e.name
-      case EntityKind.Class       => "cl:" + e.name
-      case EntityKind.Type        => "t:" + e.name
-      case EntityKind.Var         => "var:" + e.name
-      case EntityKind.Package     => "pck:" + e.name
-      case EntityKind.Object      => "o:" + e.name
-      case EntityKind.Constructor => "cons"
-      case EntityKind.Def         => "def:" + e.name
-      case EntityKind.Val         => "val:" + e.name
-      case EntityKind.Unknown     => "u:" + e.name
+      case EntityKind.Constructor => e.kind.prefix
+      case k => k.prefix + ":" + e.name
     })
     def read(value: JsValue) = value.convertTo[String] match {
       case r"tr:(.*)$n"  => Entity(n, EntityKind.Trait)
@@ -34,6 +26,11 @@ object ModelJsonProtocol extends DefaultJsonProtocol {
     }
   }
 
+  implicit object pathFormat extends JsonFormat[Path] {
+    def write(p: Path) = p.elems.toJson
+    def read(value: JsValue) = Path(value.convertTo[Vector[Entity]])
+  }
+
   implicit object fullDependencyFormat extends JsonFormat[FullDependency] {
     def write(d: FullDependency) = {
       val data = Seq(
@@ -47,10 +44,10 @@ object ModelJsonProtocol extends DefaultJsonProtocol {
     }
     def read(value: JsValue) = {
       val m = value.asJsObject.fields
-      val from = m("sym").convertTo[Vector[Entity]]
+      val from = m("sym").convertTo[Path]
       val (kind, to) =
-        if(m.contains("uses")) (DependencyKind.Uses, m("uses").convertTo[Vector[Entity]])
-        else (DependencyKind.Extends, m("extends").convertTo[Vector[Entity]])
+        if(m.contains("uses")) (DependencyKind.Uses, m("uses").convertTo[Path])
+        else (DependencyKind.Extends, m("extends").convertTo[Path])
       val count = m.get("count").map(_.convertTo[Int]).getOrElse(1)
       FullDependency(from, to, kind, count)
     }
