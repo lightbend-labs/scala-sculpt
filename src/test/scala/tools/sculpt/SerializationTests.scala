@@ -1,5 +1,6 @@
 package scala.tools.sculpt
-package model
+
+import model._
 
 import org.junit.Test
 import org.junit.Assert.assertEquals
