@@ -57,7 +57,7 @@ abstract class ExtractDependencies extends PluginComponent {
 
     def createFullDependencies(syms: MultiMapIterator, kind: DependencyKind): Seq[FullDependency] = {
       def entitiesFor(s: Symbol) =
-        s.ownerChain.reverse.dropWhile(s => s.isEffectiveRoot || s.isEmptyPackage).map(Entity.forSymbol _)
+        Path(s.ownerChain.reverse.dropWhile(s => s.isEffectiveRoot || s.isEmptyPackage).map(Entity.forSymbol _))
       (for {
         (from, tos) <- syms
         fromEntities = entitiesFor(from)

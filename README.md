@@ -18,7 +18,27 @@ scala> import scala.tools.sculpt.cmd._
 import scala.tools.sculpt.cmd._
 
 scala> load("../stest/dep.json")
-res0: Seq[scala.tools.sculpt.model.FullDependency] = List((class)Dep1 extends (package)scala.(type)AnyRef [1], (class)Dep1.(constructor)<init> uses (class)Dep1 [1], (class)Dep1.(constructor)<init> uses (package)java.(package)lang.(class)Object.(constructor)<init> [1], (class)Dep1.(val)x uses (package)scala.(class)Int [2], (class)Dep2 extends (package)scala.(type)AnyRef [1], (class)Dep2.(constructor)<init> uses (class)Dep2 [1], (class)Dep2.(constructor)<init> uses (package)java.(package)lang.(class)Object.(constructor)<init> [1], (class)Dep2.(val)x uses (package)scala.(class)Int [2])
+res0: scala.tools.sculpt.model.Graph =
+Graph '../stest/dep.json': 9 nodes, 8 edges
+Nodes:
+  - pck:scala.t:AnyRef
+  - cl:Dep2
+  - cl:Dep1.val:x
+  - cl:Dep2.val:x
+  - pck:scala.cl:Int
+  - cl:Dep1
+  - cl:Dep1.cons:<init>
+  - cl:Dep2.cons:<init>
+  - pck:java.pck:lang.cl:Object.cons:<init>
+Edges:
+  - cl:Dep1.cons:<init> -[Uses]-> cl:Dep1
+  - cl:Dep1.cons:<init> -[Uses]-> pck:java.pck:lang.cl:Object.cons:<init>
+  - cl:Dep2.cons:<init> -[Uses]-> cl:Dep2
+  - cl:Dep1.val:x -[Uses]-> pck:scala.cl:Int
+  - cl:Dep2 -[Extends]-> pck:scala.t:AnyRef
+  - cl:Dep1 -[Extends]-> pck:scala.t:AnyRef
+  - cl:Dep2.cons:<init> -[Uses]-> pck:java.pck:lang.cl:Object.cons:<init>
+  - cl:Dep2.val:x -[Uses]-> pck:scala.cl:Int
 
 scala>
 ```
