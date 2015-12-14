@@ -7,22 +7,20 @@ import scala.tools.sculpt.util.RegexInterpolator
 object ModelJsonProtocol extends DefaultJsonProtocol {
 
   implicit object entityFormat extends JsonFormat[Entity] {
-    def write(e: Entity) = new JsString(e.kind match {
-      case EntityKind.Constructor => e.kind.prefix
-      case k => k.prefix + ":" + e.name
-    })
+    def write(e: Entity) = new JsString(e.kind.prefix + ":" + e.name)
     def read(value: JsValue) = value.convertTo[String] match {
+      case r"ov:(.*)$n"  => Entity(n, EntityKind.Module)
+      case r"def:(.*)$n" => Entity(n, EntityKind.Method)
+      case r"var:(.*)$n" => Entity(n, EntityKind.Mutable)
+      case r"mac:(.*)$n" => Entity(n, EntityKind.Macro)
+      case r"pk:(.*)$n" =>  Entity(n, EntityKind.Package)
+      case r"t:(.*)$n"   => Entity(n, EntityKind.Term)
       case r"tr:(.*)$n"  => Entity(n, EntityKind.Trait)
+      case r"pkt:(.*)$n" => Entity(n, EntityKind.PackageType)
+      case r"o:(.*)$n"   => Entity(n, EntityKind.ModuleClass)
       case r"cl:(.*)$n"  => Entity(n, EntityKind.Class)
-      case r"t:(.*)$n"   => Entity(n, EntityKind.Type)
-      case r"var:(.*)$n" => Entity(n, EntityKind.Var)
-      case r"pck:(.*)$n" => Entity(n, EntityKind.Package)
-      case r"o:(.*)$n"   => Entity(n, EntityKind.Object)
-      case "cons"        => Entity("<init>", EntityKind.Constructor)
-      case r"def:(.*)$n" => Entity(n, EntityKind.Def)
-      case r"val:(.*)$n" => Entity(n, EntityKind.Val)
-      case r"u:(.*)$n"   => Entity(n, EntityKind.Unknown)
-      case _ => throw new DeserializationException("Entity string expected")
+      case r"tp:(.*)$n"  => Entity(n, EntityKind.Type)
+      case _ => throw new DeserializationException("'EntityKind:Name' string expected")
     }
   }
 

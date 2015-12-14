@@ -4,18 +4,25 @@ import scala.StringBuilder
 import scala.collection.mutable
 import scala.reflect.internal.Symbols
 
-sealed abstract class EntityKind(val prefix: String)
+sealed trait EntityKind {
+  def prefix: String
+}
 object EntityKind {
-  case object Trait extends EntityKind("tr")
-  case object Class extends EntityKind("cl")
-  case object Type extends EntityKind("t")
-  case object Var extends EntityKind("var")
-  case object Package extends EntityKind("pck")
-  case object Object extends EntityKind("o")
-  case object Constructor extends EntityKind("cons")
-  case object Def extends EntityKind("def")
-  case object Val extends EntityKind("val")
-  case object Unknown extends EntityKind("u")
+  sealed abstract class AnyTerm(val prefix: String) extends EntityKind
+  sealed abstract class AnyType(val prefix: String) extends EntityKind
+
+  case object Module extends AnyTerm("ov")
+  case object Method extends AnyTerm("def")
+  case object Mutable extends AnyTerm("var")
+  case object Macro extends AnyTerm("mac")
+  case object Package extends AnyTerm("pk")
+  case object Term extends AnyTerm("t")
+
+  case object Trait extends AnyType("tr")
+  case object PackageType extends AnyType("pkt")
+  case object ModuleClass extends AnyType("o")
+  case object Class extends AnyType("cl")
+  case object Type extends AnyType("tp")
 }
 
 sealed trait DependencyKind
@@ -34,16 +41,20 @@ case class Path(elems: Seq[Entity]) {
 
 object Entity {
   def forSymbol(sym: Symbols#Symbol): Entity = {
-    val kind = if(sym.isJavaInterface || sym.isTrait && !sym.isImplClass) EntityKind.Trait
-      else if(sym.hasPackageFlag) EntityKind.Package
-      else if(sym.isModuleClass) EntityKind.Object
+    val kind = if(sym.isType) {
+      if(sym.isTrait) EntityKind.Trait
+      else if(sym.hasPackageFlag) EntityKind.PackageType
+      else if(sym.isModuleClass) EntityKind.ModuleClass
       else if(sym.isClass) EntityKind.Class
-      else if(sym.isType && !sym.isParameter) EntityKind.Type
-      else if(sym.isVariable) EntityKind.Var
-      else if(sym.isClassConstructor) EntityKind.Constructor
-      else if(sym.isSourceMethod) EntityKind.Def
-      else if(sym.isTerm && (!sym.isParameter || sym.isParamAccessor)) EntityKind.Val
-      else EntityKind.Unknown
+      else EntityKind.Type
+    } else { // Term
+      if(sym.hasPackageFlag) EntityKind.Package
+      else if(sym.isTermMacro) EntityKind.Macro
+      else if(sym.isModule) EntityKind.Module
+      else if(sym.isMethod) EntityKind.Method
+      else if(sym.isVariable) EntityKind.Mutable
+      else EntityKind.Term
+    }
     Entity(sym.nameString, kind)
   }
 }
