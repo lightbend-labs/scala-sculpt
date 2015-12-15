@@ -33,12 +33,16 @@ object Scaffold {
 
 }
 
-import org.junit.Test
-import org.junit.Assert.assertEquals
+import org.scalatest.FunSuite
 
-class SmokeTest {
-  @Test def generate(): Unit = {
-    assertEquals(Samples.json1,
-      Scaffold.analyze(Samples.source1))
+class SmokeTest extends FunSuite {
+  def check(s: Sample): Unit = {
+    assertResult(s.json) {
+      Scaffold.analyze(s.source)
+    }
   }
+  for (sample <- Sample.samples)
+    test(sample.name) {
+      check(sample)
+    }
 }

@@ -1,13 +1,10 @@
 package scala.tools.sculpt
 
 import model._
-
-import org.junit.Test
-import org.junit.Assert.assertEquals
-
+import org.scalatest.FunSuite
 import spray.json._
 
-class SerializationTests {
+class SerializationTests extends FunSuite {
 
   // Stefan didn't like the appearance of the output with either of
   // spray-json's formatters (`compactPrint` and `prettyPrint`),
@@ -19,17 +16,29 @@ class SerializationTests {
   }
 
   // JSON -> JSValue -> JSON
-  @Test def roundTripThroughJsonASTs(): Unit = {
-    assertEquals(Samples.json1,
-      print(Samples.json1.parseJson))
+  def roundTripThroughJsonASTs(sample: Sample): Unit = {
+    assertResult(sample.json) {
+      print(sample.json.parseJson)
+    }
   }
 
   // JSON -> JSValue -> Seq[FullDependency] -> JSValue -> JSON
-  @Test def roundTripThroughModel(): Unit = {
+  def roundTripThroughModel(sample: Sample): Unit = {
     import ModelJsonProtocol._
     val dependencies =
-      Samples.json1.parseJson.convertTo[Seq[FullDependency]]
-    assertEquals(Samples.json1, print(dependencies.toJson))
+      sample.json.parseJson.convertTo[Seq[FullDependency]]
+    assertResult(sample.json) {
+      print(dependencies.toJson)
+    }
+  }
+
+  for (sample <- Sample.samples) {
+    test(s"${sample.name}: through ASTs") {
+      roundTripThroughJsonASTs(sample)
+    }
+    test(s"${sample.name}: through model") {
+      roundTripThroughModel(sample)
+    }
   }
 
 }

@@ -9,8 +9,7 @@ scalaVersion  := "2.11.7"
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
   "io.spray" %% "spray-json" % "1.3.2",
-  "junit" % "junit" % "4.12" % "test",
-  "com.novocode" % "junit-interface" % "0.11" % "test"
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
 fork in Test := true
