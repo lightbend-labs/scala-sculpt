@@ -18,27 +18,51 @@ scala> import scala.tools.sculpt.cmd._
 import scala.tools.sculpt.cmd._
 
 scala> load("../stest/dep.json")
-res0: scala.tools.sculpt.model.Graph =
-Graph '../stest/dep.json': 9 nodes, 8 edges
+res0: scala.tools.sculpt.model.Graph = Graph '../stest/dep.json': 11 nodes, 11 edges
+
+scala> println(res0.fullString)
+Graph '../stest/dep.json': 11 nodes, 11 edges
 Nodes:
-  - pck:scala.t:AnyRef
-  - cl:Dep2
-  - cl:Dep1.val:x
-  - cl:Dep2.val:x
-  - pck:scala.cl:Int
-  - cl:Dep1
-  - cl:Dep1.cons:<init>
-  - cl:Dep2.cons:<init>
-  - pck:java.pck:lang.cl:Object.cons:<init>
+  - o:Dep1.def:<init>
+  - o:Dep2.t:x
+  - pkt:scala.cl:Int
+  - o:Dep1.def:x
+  - o:Dep2
+  - pkt:scala.tp:AnyRef
+  - o:Dep1.t:x
+  - o:Dep2.def:x
+  - o:Dep2.def:<init>
+  - pkt:java.pkt:lang.cl:Object.def:<init>
+  - o:Dep1
 Edges:
-  - cl:Dep1.cons:<init> -[Uses]-> cl:Dep1
-  - cl:Dep1.cons:<init> -[Uses]-> pck:java.pck:lang.cl:Object.cons:<init>
-  - cl:Dep2.cons:<init> -[Uses]-> cl:Dep2
-  - cl:Dep1.val:x -[Uses]-> pck:scala.cl:Int
-  - cl:Dep2 -[Extends]-> pck:scala.t:AnyRef
-  - cl:Dep1 -[Extends]-> pck:scala.t:AnyRef
-  - cl:Dep2.cons:<init> -[Uses]-> pck:java.pck:lang.cl:Object.cons:<init>
-  - cl:Dep2.val:x -[Uses]-> pck:scala.cl:Int
+  - o:Dep2.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
+  - o:Dep2.def:<init> -[Uses]-> o:Dep2
+  - o:Dep2.def:x -[Uses]-> pkt:scala.cl:Int
+  - o:Dep1.def:<init> -[Uses]-> o:Dep1
+  - o:Dep2 -[Extends]-> pkt:scala.tp:AnyRef
+  - o:Dep1.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
+  - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
+  - o:Dep2.def:x -[Uses]-> o:Dep2.t:x
+  - o:Dep2.t:x -[Uses]-> pkt:scala.cl:Int
+  - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
+  - o:Dep1.def:x -[Uses]-> pkt:scala.cl:Int
+
+scala> res0.removePaths("Dep2", "java.lang")
+
+scala> println(res0.fullString)
+Graph '../stest/dep.json': 6 nodes, 4 edges
+Nodes:
+  - o:Dep1.def:<init>
+  - pkt:scala.cl:Int
+  - o:Dep1.def:x
+  - pkt:scala.tp:AnyRef
+  - o:Dep1.t:x
+  - o:Dep1
+Edges:
+  - o:Dep1.def:<init> -[Uses]-> o:Dep1
+  - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
+  - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
+  - o:Dep1.def:x -[Uses]-> pkt:scala.cl:Int
 
 scala>
 ```

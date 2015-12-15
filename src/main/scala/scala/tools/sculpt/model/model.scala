@@ -37,6 +37,7 @@ case class Entity(name: String, kind: EntityKind) {
 
 case class Path(elems: Seq[Entity]) {
   override def toString = elems.mkString(".")
+  def simpleString = elems.map(_.name).mkString(".")
 }
 
 object Entity {
@@ -67,6 +68,7 @@ case class FullDependency(from: Path, to: Path, kind: DependencyKind, count: Int
 }
 
 trait Node {
+  def path: Path
   def edgesIn: Iterable[Edge]
   def edgesOut: Iterable[Edge]
   def connectTo(to: Node, kind: DependencyKind): Edge
@@ -125,6 +127,19 @@ class Graph(val name: String) { graph =>
     override def toString = path.toString
   }
 
+  /** Remove all nodes (and their connecting edges) whose path matches one of the
+    * specified simple path names (i.e. kinds are ignored, names concatenated by '.',
+    * no quotations). Descendants of the specified paths are also removed. */
+  def removePaths(simplePaths: String*): Unit = {
+    val s = simplePaths.toSet
+    nodes.toSeq.foreach { n =>
+      val simple = n.path.simpleString
+      if(s.exists { p =>
+        simple == p || simple.startsWith(p + ".")
+      }) n.remove
+    }
+  }
+
   private[this] class GraphEdge(_from: GraphNode, _to: GraphNode, _kind: DependencyKind) extends Edge {
     var dead = false
     def ensureNotDead[T](v: T): T =
@@ -143,12 +158,15 @@ class Graph(val name: String) { graph =>
       }
   }
 
-  override def toString: String = {
+  override def toString: String = s"Graph '$name': ${nodes.size} nodes, ${edges.size} edges"
+
+  /** Create a full dump of the graph */
+  def fullString: String = {
     val b = new StringBuilder()
-    b.append(s"Graph '$name': ${nodes.size} nodes, ${edges.size} edges\nNodes:\n")
+    b.append(toString + "\nNodes:\n")
     for(n <- nodes) b.append(s"  - $n\n")
-    b.append("Edges:\n")
-    for(e <- edges) b.append(s"  - $e\n")
+    b.append("Edges:")
+    for(e <- edges) b.append(s"\n  - $e")
     b.result()
   }
 }
