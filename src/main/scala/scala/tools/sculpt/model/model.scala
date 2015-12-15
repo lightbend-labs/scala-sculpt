@@ -158,12 +158,15 @@ class Graph(val name: String) { graph =>
       }
   }
 
-  override def toString: String = {
+  override def toString: String = s"Graph '$name': ${nodes.size} nodes, ${edges.size} edges"
+
+  /** Create a full dump of the graph */
+  def fullString: String = {
     val b = new StringBuilder()
-    b.append(s"Graph '$name': ${nodes.size} nodes, ${edges.size} edges\nNodes:\n")
+    b.append(toString + "\nNodes:\n")
     for(n <- nodes) b.append(s"  - $n\n")
-    b.append("Edges:\n")
-    for(e <- edges) b.append(s"  - $e\n")
+    b.append("Edges:")
+    for(e <- edges) b.append(s"\n  - $e")
     b.result()
   }
 }
