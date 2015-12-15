@@ -18,4 +18,12 @@ package object cmd {
     val m = loadModel(path)
     Graph(path, m)
   }
+
+  /** Save a Sculpt model JSON file */
+  def saveModel(m: Seq[FullDependency], path: String): Unit =
+    new scala.reflect.io.File(new java.io.File(path))(Codec.UTF8).writeAll(FullDependenciesPrinter(m.toJson))
+
+  /** Save a graph to a Sculpt model JSON file */
+  def save(graph: Graph, path: String): Unit =
+    saveModel(graph.toJsonModel, path)
 }
