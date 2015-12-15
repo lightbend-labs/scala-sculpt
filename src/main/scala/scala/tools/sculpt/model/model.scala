@@ -71,7 +71,7 @@ trait Node {
   def path: Path
   def edgesIn: Iterable[Edge]
   def edgesOut: Iterable[Edge]
-  def connectTo(to: Node, kind: DependencyKind): Edge
+  def connectTo(to: Node, kind: DependencyKind, count: Int): Edge
   def remove: Boolean
 }
 
@@ -80,6 +80,7 @@ trait Edge {
   def to: Node
   def kind: DependencyKind
   def remove: Boolean
+  def count: Int
   override def toString = s"$from -[$kind]-> $to"
 }
 
@@ -103,10 +104,10 @@ class Graph(val name: String) { graph =>
     def edgesIn: Iterable[Edge] = ensureNotDead(in.values)
     def edgesOut: Iterable[Edge] = ensureNotDead(out.values)
 
-    def connectTo(to: Node, kind: DependencyKind): Edge = {
+    def connectTo(to: Node, kind: DependencyKind, count: Int): Edge = {
       val _to = to.asInstanceOf[GraphNode]
       ensureNotDead(out.getOrElseUpdate((_to, kind), {
-        val e = new GraphEdge(this, _to, kind)
+        val e = new GraphEdge(this, _to, kind, count)
         out.put((to, kind), e)
         _to.in.put((self, kind), e)
         graph.edgesSet.add(e)
@@ -140,7 +141,7 @@ class Graph(val name: String) { graph =>
     }
   }
 
-  private[this] class GraphEdge(_from: GraphNode, _to: GraphNode, _kind: DependencyKind) extends Edge {
+  private[this] class GraphEdge(_from: GraphNode, _to: GraphNode, _kind: DependencyKind, _count: Int) extends Edge {
     var dead = false
     def ensureNotDead[T](v: T): T =
       if(dead) throw new IllegalStateException(s"Edge '$this' has been removed from the graph")
@@ -148,6 +149,7 @@ class Graph(val name: String) { graph =>
     def from: Node = ensureNotDead(_from)
     def to: Node = ensureNotDead(_to)
     def kind = ensureNotDead(_kind)
+    def count = ensureNotDead(_count)
     def remove: Boolean =
       if(dead) false else {
         _from.out.remove((_to, _kind))
@@ -169,13 +171,16 @@ class Graph(val name: String) { graph =>
     for(e <- edges) b.append(s"\n  - $e")
     b.result()
   }
+
+  def toJsonModel: Seq[FullDependency] =
+    edgesSet.map(e => FullDependency(e.from.path, e.to.path, e.kind, e.count)).toSeq.sortBy(_.toString)
 }
 
 object Graph {
   def apply(name: String, model: Seq[FullDependency]): Graph = {
     val g = new Graph(name)
     for(d <- model)
-      g.addNode(d.from).connectTo(g.addNode(d.to), d.kind)
+      g.addNode(d.from).connectTo(g.addNode(d.to), d.kind, d.count)
     g
   }
 }

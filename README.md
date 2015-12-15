@@ -13,6 +13,8 @@ After `copyResources` in sbt, you can use the compiled plugin from another scala
 Sample interactive session
 --------------------------
 
+Loading a JSON model into the REPL:
+
 ```
 scala> import scala.tools.sculpt.cmd._
 import scala.tools.sculpt.cmd._
@@ -35,18 +37,22 @@ Nodes:
   - pkt:java.pkt:lang.cl:Object.def:<init>
   - o:Dep1
 Edges:
-  - o:Dep2.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
   - o:Dep2.def:<init> -[Uses]-> o:Dep2
+  - o:Dep1.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
+  - o:Dep2.def:x -[Uses]-> o:Dep2.t:x
+  - o:Dep2.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
+  - o:Dep2.t:x -[Uses]-> pkt:scala.cl:Int
+  - o:Dep1.def:x -[Uses]-> pkt:scala.cl:Int
+  - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
+  - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
+  - o:Dep2 -[Extends]-> pkt:scala.tp:AnyRef
   - o:Dep2.def:x -[Uses]-> pkt:scala.cl:Int
   - o:Dep1.def:<init> -[Uses]-> o:Dep1
-  - o:Dep2 -[Extends]-> pkt:scala.tp:AnyRef
-  - o:Dep1.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
-  - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
-  - o:Dep2.def:x -[Uses]-> o:Dep2.t:x
-  - o:Dep2.t:x -[Uses]-> pkt:scala.cl:Int
-  - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
-  - o:Dep1.def:x -[Uses]-> pkt:scala.cl:Int
+```
 
+Removing some nodes:
+
+```
 scala> res0.removePaths("Dep2", "java.lang")
 
 scala> println(res0.fullString)
@@ -59,10 +65,32 @@ Nodes:
   - o:Dep1.t:x
   - o:Dep1
 Edges:
+  - o:Dep1.def:x -[Uses]-> pkt:scala.cl:Int
+  - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
+  - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
+  - o:Dep1.def:<init> -[Uses]-> o:Dep1
+```
+
+Saving the graph back to a JSON model and loading it again:
+
+```
+scala> save(res0, "dep2.json")
+
+scala> load("dep2.json")
+res5: scala.tools.sculpt.model.Graph = Graph 'dep2.json': 6 nodes, 4 edges
+
+scala> println(res5.fullString)
+Graph 'dep2.json': 6 nodes, 4 edges
+Nodes:
+  - o:Dep1.def:<init>
+  - pkt:scala.cl:Int
+  - o:Dep1.def:x
+  - pkt:scala.tp:AnyRef
+  - o:Dep1.t:x
+  - o:Dep1
+Edges:
+  - o:Dep1.def:x -[Uses]-> pkt:scala.cl:Int
+  - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
   - o:Dep1.def:<init> -[Uses]-> o:Dep1
   - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
-  - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
-  - o:Dep1.def:x -[Uses]-> pkt:scala.cl:Int
-
-scala>
 ```
