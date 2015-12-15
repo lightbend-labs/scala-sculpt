@@ -13,7 +13,7 @@ object TreePrinter {
     }
     for {
       node <- graph.nodes
-      kind = node.path.elems.last.kind
+      kind <- node.path.elems.lastOption.map(_.kind)  // could be empty package
       if kind.isInstanceOf[EntityKind.AnyType]
     } traverse(node)
     sb.toString
