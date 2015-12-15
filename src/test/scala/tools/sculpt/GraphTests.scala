@@ -1,22 +1,25 @@
 package scala.tools.sculpt
 import model._
 
-import org.junit.Test
-import org.junit.Assert.assertEquals
+import org.scalatest.FunSuite
 
-class GraphTests {
+class GraphTests extends FunSuite {
 
-  def test(sample: Sample): Unit = {
+  def check(sample: Sample): Unit = {
     import spray.json._
     import ModelJsonProtocol._
     val dependencies = sample.json.parseJson.convertTo[Seq[FullDependency]]
     val graph = Graph.apply(sample.name, dependencies)
-    assertEquals(sample.graph.get, graph.fullString)
+    assertResult(sample.graph.get) {
+      graph.fullString
+    }
   }
 
-  @Test def sample1(): Unit =
-    test(Sample.sample1)
-  @Test def sample5(): Unit =
-    test(Sample.sample5)
+  for {
+    sample <- Sample.samples
+    _ <- sample.graph
+  } test(sample.name) {
+    check(sample)
+  }
 
 }

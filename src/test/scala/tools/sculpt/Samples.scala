@@ -9,6 +9,8 @@ case class Sample(
 
 object Sample {
 
+  lazy val samples = Seq(sample1, sample2, sample3, sample4, sample5)
+
   val sample1 = Sample(
     name = "lone object",
     source = "object O",
