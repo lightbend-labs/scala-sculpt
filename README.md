@@ -46,6 +46,27 @@ then the command line shown above will generate this `dep.json` file:
 ]
 ```
 
+Each line in the JSON file represents an edge between two symbols in a
+dependency graph.
+
+The edges are of two types, `extends` and `uses`.
+
+Each symbol is represented in the JSON as an array of strings, where
+each string represents a part of the symbol's fully qualified name.
+
+So for example, in the above source code, we see that `Dep1` extends
+`scala.AnyRef`:
+
+    {"sym": ["o:Dep1"], "extends": ["pkt:scala", "tp:AnyRef"]},
+
+And we see that `Dep1` uses `scala.Int` in two places:
+
+    {"sym": ["o:Dep1", "def:x"], "uses": ["pkt:scala", "cl:Int"]},
+    {"sym": ["o:Dep1", "t:x"], "uses": ["pkt:scala", "cl:Int"]},
+
+from this we see that `scala.Int` is used as the declared return type
+of `Dep1.x`, and as the inferred type of the body of `Dep1.x`.
+
 For brevity, the following abbreviations are used in the JSON output:
 
 ### Terms
@@ -69,7 +90,24 @@ o            | object
 cl           | class
 tp           | other type
 
-## Sample interactive session
+### Other
+
+The name of a constructor is always `<init>`.
+
+## Graphs represented as case classes
+
+The same JAR that contains the plugin also contains a suite of case
+classes for representing the same information in the JSON files as
+Scala objects.
+
+We provide a `load` method for parsing a JSON file into instances
+of these case classes, and a `save` method for writing the instances
+back out to JSON.
+
+These classes provide a possible starting point for graph analysis and
+manipulation, e.g. in the REPL.
+
+### Sample interactive session
 
 Now in a Scala 2.11 REPL with the same JARs on the classpath:
 
