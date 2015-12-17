@@ -1,6 +1,6 @@
 organization  := "com.typesafe"
 name          := "scala-sculpt"
-version       := "0.0.1"
+version       := "0.1.0"
 licenses      := Seq("Apache License v2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 homepage      := Some(url("http://github.com/typesafehub/scala-sculpt"))
 
