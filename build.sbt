@@ -22,8 +22,9 @@ scalacOptions ++= Seq(
   "-Xfatal-warnings"
 )
 
-mappings in (Compile, packageBin) +=
-  (baseDirectory.value / "README.md") -> "README.md"
+mappings in (Compile, packageBin) ++= Seq(
+  (baseDirectory.value / "README.md") -> "README.md",
+  (baseDirectory.value / "LICENSE.md") -> "LICENSE.md")
 
 pomExtra := (<scm>
   <url>https://github.com/typesafehub/scala-sculpt.git</url>
