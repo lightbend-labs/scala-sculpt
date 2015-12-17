@@ -22,6 +22,9 @@ scalacOptions ++= Seq(
   "-Xfatal-warnings"
 )
 
+mappings in (Compile, packageBin) +=
+  (baseDirectory.value / "README.md") -> "README.md"
+
 pomExtra := (<scm>
   <url>https://github.com/typesafehub/scala-sculpt.git</url>
   <connection>scm:https://github.com/typesafehub/scala-sculpt.git</connection></scm>)
