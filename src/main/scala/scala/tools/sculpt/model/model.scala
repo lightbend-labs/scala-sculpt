@@ -1,3 +1,5 @@
+// Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
+
 package scala.tools.sculpt.model
 
 import scala.StringBuilder
