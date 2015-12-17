@@ -1,3 +1,5 @@
+// Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
+
 organization  := "com.typesafe"
 name          := "scala-sculpt"
 version       := "0.1.0"

@@ -1,3 +1,5 @@
+// Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
+
 package scala.tools.sculpt.plugin
 
 import scala.collection.mutable
