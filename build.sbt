@@ -2,7 +2,7 @@
 
 organization  := "com.typesafe"
 name          := "scala-sculpt"
-version       := "0.1.0"
+version       := "0.1.1"
 licenses      := Seq("Apache License v2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 homepage      := Some(url("http://github.com/typesafehub/scala-sculpt"))
 
@@ -23,6 +23,12 @@ scalacOptions ++= Seq(
   "-Xlint",
   "-Xfatal-warnings"
 )
+
+// generate same JAR name as `package` would:
+// - don't append "-assembly"; see issue #18
+// - and do include the "_2.11", don't know why assembly removes that by default
+assemblyJarName in assembly :=
+  s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar"
 
 mappings in (Compile, packageBin) ++= Seq(
   (baseDirectory.value / "README.md") -> "README.md",
