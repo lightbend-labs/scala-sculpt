@@ -24,6 +24,12 @@ scalacOptions ++= Seq(
   "-Xfatal-warnings"
 )
 
+// generate same JAR name as `package` would:
+// - don't append "-assembly"; see issue #18
+// - and do include the "_2.11", don't know why assembly removes that by default
+assemblyJarName in assembly :=
+  s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar"
+
 mappings in (Compile, packageBin) ++= Seq(
   (baseDirectory.value / "README.md") -> "README.md",
   (baseDirectory.value / "LICENSE.md") -> "LICENSE.md")

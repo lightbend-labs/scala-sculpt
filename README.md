@@ -15,19 +15,18 @@ incremental recompile times.
 
 ## Building the plugin from source
 
-`sbt package` will create `target/scala-2.11/scala-sculpt_2.11-0.1.0.jar`.
+`sbt assembly` will create `target/scala-2.11/scala-sculpt_2.11-0.1.0.jar`.
+(The JAR is a fat JAR that bundles its dependency on spray-json.)
 
 ## Using the plugin
 
 You can use the compiled plugin with the Scala 2.11 compiler as follows.
 
 Supposing you have `scala-sculpt_2.11-0.1.0.jar` in your current working directory,
-along with `spray-json_2.11-1.3.2.jar` (which you can download
-[here](http://repo1.maven.org/maven2/io/spray/spray-json_2.11/1.3.2/spray-json_2.11-1.3.2.jar).
 
 Then you can do e.g.:
 
-    scalac -Xplugin:scala-sculpt_2.11-0.1.0.jar:spray-json_2.11-1.3.2.jar \
+    scalac -Xplugin:scala-sculpt_2.11-0.1.0.jar \
       -Xplugin-require:sculpt \
       -P:sculpt:out=dep.json \
       Dep.scala
@@ -124,7 +123,7 @@ manipulation, e.g. in the REPL.
 
 Now in a Scala 2.11 REPL with the same JARs on the classpath:
 
-    scala -classpath scala-sculpt_2.11-0.1.0.jar:spray-json_2.11-1.3.2.jar
+    scala -classpath scala-sculpt_2.11-0.1.0.jar
 
 If we load `dep.json` as follows, we'll see the following graph:
 
