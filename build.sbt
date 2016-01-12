@@ -33,9 +33,9 @@ assemblyJarName in assembly :=
 assemblyOption in assembly :=
   (assemblyOption in assembly).value.copy(includeScala = false)
 
-mappings in (Compile, packageBin) ++= Seq(
-  (baseDirectory.value / "README.md") -> "README.md",
-  (baseDirectory.value / "LICENSE.md") -> "LICENSE.md")
+unmanagedResources in Compile ++=
+  Seq("README.md", "LICENSE.md")
+    .map(baseDirectory.value / _)
 
 pomExtra := (<scm>
   <url>https://github.com/typesafehub/scala-sculpt.git</url>
