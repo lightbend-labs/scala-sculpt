@@ -1,8 +1,8 @@
-// Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
+// Copyright (C) 2015-2016 Typesafe Inc. <http://typesafe.com>
 
 organization  := "com.typesafe"
 name          := "scala-sculpt"
-version       := "0.1.1"
+version       := "0.1.2"
 licenses      := Seq("Apache License v2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 homepage      := Some(url("http://github.com/typesafehub/scala-sculpt"))
 
@@ -30,9 +30,12 @@ scalacOptions ++= Seq(
 assemblyJarName in assembly :=
   s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar"
 
-mappings in (Compile, packageBin) ++= Seq(
-  (baseDirectory.value / "README.md") -> "README.md",
-  (baseDirectory.value / "LICENSE.md") -> "LICENSE.md")
+assemblyOption in assembly :=
+  (assemblyOption in assembly).value.copy(includeScala = false)
+
+unmanagedResources in Compile ++=
+  Seq("README.md", "LICENSE.md")
+    .map(baseDirectory.value / _)
 
 pomExtra := (<scm>
   <url>https://github.com/typesafehub/scala-sculpt.git</url>
