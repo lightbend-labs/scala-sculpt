@@ -30,6 +30,9 @@ scalacOptions ++= Seq(
 assemblyJarName in assembly :=
   s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar"
 
+assemblyOption in assembly :=
+  (assemblyOption in assembly).value.copy(includeScala = false)
+
 mappings in (Compile, packageBin) ++= Seq(
   (baseDirectory.value / "README.md") -> "README.md",
   (baseDirectory.value / "LICENSE.md") -> "LICENSE.md")
