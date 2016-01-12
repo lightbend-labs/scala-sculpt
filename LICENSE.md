@@ -1,4 +1,4 @@
-Copyright (c) 2015, Typesafe Inc.  
+Copyright (c) 2015-2016, Typesafe Inc.  
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
