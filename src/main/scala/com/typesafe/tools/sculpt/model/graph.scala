@@ -3,7 +3,6 @@
 package com.typesafe.tools.sculpt.model
 
 import scala.collection.mutable
-import scala.StringBuilder
 
 trait Node {
   def path: Path
