@@ -37,7 +37,7 @@ object Scaffold {
 
 import org.scalatest.FunSuite
 
-class SmokeTest extends FunSuite {
+class IntegrationTest extends FunSuite {
   def check(s: Sample): Unit = {
     assertResult(s.json) {
       Scaffold.analyze(s.source)
