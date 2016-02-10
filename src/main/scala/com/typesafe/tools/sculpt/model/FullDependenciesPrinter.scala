@@ -1,6 +1,6 @@
 // Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
 
-package scala.tools.sculpt.model
+package com.typesafe.tools.sculpt.model
 
 import spray.json._
 import java.lang.StringBuilder

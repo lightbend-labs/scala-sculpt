@@ -1,6 +1,6 @@
 // Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
 
-package scala.tools.sculpt
+package com.typesafe.tools.sculpt
 
 import scala.tools.nsc.{ Settings, Global }
 import scala.tools.nsc.io.VirtualDirectory

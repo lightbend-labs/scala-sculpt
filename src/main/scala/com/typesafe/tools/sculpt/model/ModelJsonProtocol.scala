@@ -1,9 +1,9 @@
 // Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
 
-package scala.tools.sculpt.model
+package com.typesafe.tools.sculpt.model
 
 import spray.json._
-import scala.tools.sculpt.util.RegexInterpolator
+import com.typesafe.tools.sculpt.util.RegexInterpolator
 
 /** JSON serialization/deserialization for the Sculpt model types */
 object ModelJsonProtocol extends DefaultJsonProtocol {

@@ -1,6 +1,6 @@
 // Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
 
-package scala.tools.sculpt.plugin
+package com.typesafe.tools.sculpt.plugin
 
 import scala.collection.mutable
 import scala.collection.mutable.HashSet
@@ -8,9 +8,9 @@ import scala.io.Codec
 import scala.tools.nsc
 import nsc.plugins._
 import scala.reflect.internal.Flags.{PACKAGE}
-import scala.tools.sculpt.model._
+import com.typesafe.tools.sculpt.model._
 import spray.json._
-import scala.tools.sculpt.model.ModelJsonProtocol._
+import com.typesafe.tools.sculpt.model.ModelJsonProtocol._
 import java.io.File
 
 // adapted from the incremental compiler

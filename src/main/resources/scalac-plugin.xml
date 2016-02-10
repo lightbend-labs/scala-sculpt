@@ -1,4 +1,4 @@
 <plugin>
   <name>sculpt</name>
-  <classname>scala.tools.sculpt.plugin.SculptPlugin</classname>
+  <classname>com.typesafe.tools.sculpt.plugin.SculptPlugin</classname>
 </plugin>

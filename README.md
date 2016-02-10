@@ -128,11 +128,11 @@ Now in a Scala 2.11 REPL with the same JARs on the classpath:
 If we load `dep.json` as follows, we'll see the following graph:
 
 ```
-scala> import scala.tools.sculpt.cmd._
-import scala.tools.sculpt.cmd._
+scala> import com.typesafe.tools.sculpt.cmd._
+import com.typesafe.tools.sculpt.cmd._
 
 scala> load("dep.json")
-res0: scala.tools.sculpt.model.Graph = Graph 'dep.json': 11 nodes, 11 edges
+res0: com.typesafe.tools.sculpt.model.Graph = Graph 'dep.json': 11 nodes, 11 edges
 
 scala> println(res0.fullString)
 Graph 'dep.json': 11 nodes, 11 edges
@@ -189,7 +189,7 @@ Saving the graph back to a JSON model and loading it again:
 scala> save(res0, "dep2.json")
 
 scala> load("dep2.json")
-res5: scala.tools.sculpt.model.Graph = Graph 'dep2.json': 3 nodes, 2 edges
+res5: com.typesafe.tools.sculpt.model.Graph = Graph 'dep2.json': 3 nodes, 2 edges
 
 scala> println(res5.fullString)
 Graph 'dep2.json': 6 nodes, 4 edges

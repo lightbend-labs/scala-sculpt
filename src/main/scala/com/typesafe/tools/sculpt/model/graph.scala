@@ -1,6 +1,6 @@
 // Copyright (C) 2015-2016 Typesafe Inc. <http://typesafe.com>
 
-package scala.tools.sculpt.model
+package com.typesafe.tools.sculpt.model
 
 import scala.collection.mutable
 import scala.StringBuilder

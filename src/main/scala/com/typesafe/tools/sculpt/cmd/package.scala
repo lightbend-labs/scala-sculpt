@@ -1,11 +1,11 @@
 // Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
 
-package scala.tools.sculpt
+package com.typesafe.tools.sculpt
 
 import spray.json._
 import scala.io.Codec
-import scala.tools.sculpt.model._
-import scala.tools.sculpt.model.ModelJsonProtocol._
+import com.typesafe.tools.sculpt.model._
+import com.typesafe.tools.sculpt.model.ModelJsonProtocol._
 
 /** REPL commands and features */
 package object cmd {
