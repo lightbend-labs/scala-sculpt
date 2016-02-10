@@ -43,7 +43,7 @@ class SmokeTest extends FunSuite {
       Scaffold.analyze(s.source)
     }
   }
-  for (sample <- Sample.samples)
+  for (sample <- Samples.samples)
     test(sample.name) {
       check(sample)
     }

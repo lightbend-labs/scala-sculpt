@@ -9,7 +9,7 @@ case class Sample(
   graph: Option[String],  // too tedious to have every time
   tree: String)
 
-object Sample {
+object Samples {
 
   lazy val samples = Seq(sample1, sample2, sample3, sample4, sample5)
 

@@ -17,7 +17,7 @@ class TreeTests extends FunSuite {
     }
   }
 
-  for(sample <- Sample.samples)
+  for(sample <- Samples.samples)
     test(sample.name) {
       check(sample)
     }

@@ -34,7 +34,7 @@ class SerializationTests extends FunSuite {
     }
   }
 
-  for (sample <- Sample.samples) {
+  for (sample <- Samples.samples) {
     test(s"${sample.name}: through ASTs") {
       roundTripThroughJsonASTs(sample)
     }

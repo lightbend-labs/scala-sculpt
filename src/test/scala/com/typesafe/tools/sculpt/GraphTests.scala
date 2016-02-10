@@ -18,7 +18,7 @@ class GraphTests extends FunSuite {
   }
 
   for {
-    sample <- Sample.samples
+    sample <- Samples.samples
     _ <- sample.graph
   } test(sample.name) {
     check(sample)
