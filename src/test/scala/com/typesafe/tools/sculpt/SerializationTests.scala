@@ -1,6 +1,6 @@
 // Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
 
-package scala.tools.sculpt
+package com.typesafe.tools.sculpt
 
 import model._
 import org.scalatest.FunSuite
@@ -34,7 +34,7 @@ class SerializationTests extends FunSuite {
     }
   }
 
-  for (sample <- Sample.samples) {
+  for (sample <- Samples.samples) {
     test(s"${sample.name}: through ASTs") {
       roundTripThroughJsonASTs(sample)
     }

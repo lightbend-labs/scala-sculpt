@@ -1,6 +1,6 @@
 // Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
 
-package scala.tools.sculpt.plugin
+package com.typesafe.tools.sculpt.plugin
 
 import java.io.File
 
@@ -8,7 +8,7 @@ import scala.tools.nsc
 import nsc.Global
 import nsc.plugins.Plugin
 import nsc.plugins.PluginComponent
-import scala.tools.sculpt.util.RegexInterpolator
+import com.typesafe.tools.sculpt.util.RegexInterpolator
 
 class SculptPlugin(val global: Global) extends Plugin {
   val name        = "sculpt"

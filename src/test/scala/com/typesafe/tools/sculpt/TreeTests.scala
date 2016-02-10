@@ -1,27 +1,25 @@
 // Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
 
-package scala.tools.sculpt
+package com.typesafe.tools.sculpt
 import model._
 
 import org.scalatest.FunSuite
 
-class GraphTests extends FunSuite {
+class TreeTests extends FunSuite {
 
   def check(sample: Sample): Unit = {
     import spray.json._
     import ModelJsonProtocol._
     val dependencies = sample.json.parseJson.convertTo[Seq[FullDependency]]
     val graph = Graph.apply(sample.name, dependencies)
-    assertResult(sample.graph.get) {
-      graph.fullString
+    assertResult(sample.tree) {
+      TreePrinter(graph)
     }
   }
 
-  for {
-    sample <- Sample.samples
-    _ <- sample.graph
-  } test(sample.name) {
-    check(sample)
-  }
+  for(sample <- Samples.samples)
+    test(sample.name) {
+      check(sample)
+    }
 
 }

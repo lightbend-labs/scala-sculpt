@@ -1,6 +1,6 @@
 // Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
 
-package scala.tools.sculpt
+package com.typesafe.tools.sculpt
 
 case class Sample(
   name: String,
@@ -9,7 +9,7 @@ case class Sample(
   graph: Option[String],  // too tedious to have every time
   tree: String)
 
-object Sample {
+object Samples {
 
   lazy val samples = Seq(sample1, sample2, sample3, sample4, sample5)
 

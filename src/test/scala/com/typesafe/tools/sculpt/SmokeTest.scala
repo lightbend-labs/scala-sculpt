@@ -1,6 +1,6 @@
 // Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
 
-package scala.tools.sculpt
+package com.typesafe.tools.sculpt
 
 import scala.tools.nsc.{ Settings, Global }
 import scala.tools.nsc.io.VirtualDirectory
@@ -43,7 +43,7 @@ class SmokeTest extends FunSuite {
       Scaffold.analyze(s.source)
     }
   }
-  for (sample <- Sample.samples)
+  for (sample <- Samples.samples)
     test(sample.name) {
       check(sample)
     }
