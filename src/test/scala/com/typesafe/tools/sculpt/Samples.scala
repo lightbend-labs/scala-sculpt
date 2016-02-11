@@ -2,18 +2,46 @@
 
 package com.typesafe.tools.sculpt
 
+// to add a new sample (or update an existing one):
+//   test:runMain com.typesafe.tools.sculpt.Samples name <source code>
+// and paste the results below
+
 case class Sample(
   name: String,
   source: String,
   json: String,
-  graph: Option[String],  // too tedious to have every time
-  tree: String)
+  graph: Option[String],  // Option because it can get tedious to always include
+  tree: String
+) {
+  Samples.samples += this
+}
 
 object Samples {
 
-  lazy val samples = Seq(sample1, sample2, sample3, sample4, sample5)
+  def main(args: Array[String]): Unit = {
+    val (name, code) = (args.head, args.tail.mkString(" "))
+    val json = Scaffold.analyze(code)
+    val graph = GraphTests.toGraphString(name, json)
+    val tree = TreeTests.toTreeString(name, json) + "\n"
+    def triple(s: String): String =
+      s.lines.mkString("    \"\"\"|", "\n             |", "\"\"\".stripMargin")
+    val result =
+      s"""@  Sample(
+          @    name = "$name",
+          @    source =
+          @      ${triple(code)},
+          @    json =
+          @      ${triple(json)},
+          @    graph = Some(
+          @      ${triple(graph)}),
+          @    tree =
+          @      ${triple(tree)})""".stripMargin('@')
+    println(result)
+  }
 
-  val sample1 = Sample(
+  val samples = collection.mutable.Buffer.empty[Sample]
+
+  Sample(
     name = "lone object",
     source = "object O",
     json =
@@ -39,7 +67,7 @@ object Samples {
               |└── scala.AnyRef
               |""".stripMargin)
 
-  val sample2 = Sample(
+  Sample(
     name = "two subclasses",
     source = "trait T; class C1 extends T; class C2 extends T",
     json =
@@ -54,7 +82,26 @@ object Samples {
          |  {"sym": ["cl:C2", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
          |  {"sym": ["tr:T"], "extends": ["pkt:scala", "tp:AnyRef"]}
          |]""".stripMargin,
-    graph = None,
+    graph = Some(
+      """|Graph 'two subclasses': 7 nodes, 9 edges
+         |Nodes:
+         |  - cl:C1
+         |  - pkt:scala.tp:AnyRef
+         |  - tr:T
+         |  - cl:C1.def:<init>
+         |  - pkt:java.pkt:lang.cl:Object.def:<init>
+         |  - cl:C2
+         |  - cl:C2.def:<init>
+         |Edges:
+         |  - cl:C1 -[Extends]-> pkt:scala.tp:AnyRef
+         |  - cl:C1 -[Extends]-> tr:T
+         |  - cl:C1.def:<init> -[Uses]-> cl:C1
+         |  - cl:C1.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
+         |  - cl:C2 -[Extends]-> pkt:scala.tp:AnyRef
+         |  - cl:C2 -[Extends]-> tr:T
+         |  - cl:C2.def:<init> -[Uses]-> cl:C2
+         |  - cl:C2.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
+         |  - tr:T -[Extends]-> pkt:scala.tp:AnyRef""".stripMargin),
     tree =
       """|two subclasses:
          |└── C1
@@ -70,7 +117,7 @@ object Samples {
          |        └── scala.AnyRef
          |""".stripMargin)
 
-  val sample3 = Sample(
+  Sample(
     name = "circular dependency",
     source = "trait T1 { def x: T2 }; trait T2 { def x: T1 }",
     json =
@@ -80,7 +127,19 @@ object Samples {
          |  {"sym": ["tr:T2"], "extends": ["pkt:scala", "tp:AnyRef"]},
          |  {"sym": ["tr:T2", "def:x"], "uses": ["tr:T1"]}
          |]""".stripMargin,
-    graph = None,
+    graph = Some(
+      """|Graph 'circular dependency': 5 nodes, 4 edges
+         |Nodes:
+         |  - tr:T1
+         |  - pkt:scala.tp:AnyRef
+         |  - tr:T1.def:x
+         |  - tr:T2
+         |  - tr:T2.def:x
+         |Edges:
+         |  - tr:T1 -[Extends]-> pkt:scala.tp:AnyRef
+         |  - tr:T1.def:x -[Uses]-> tr:T2
+         |  - tr:T2 -[Extends]-> pkt:scala.tp:AnyRef
+         |  - tr:T2.def:x -[Uses]-> tr:T1""".stripMargin),
     tree =
       """|circular dependency:
          |└── T1
@@ -90,7 +149,7 @@ object Samples {
          |    └── scala.AnyRef
          |""".stripMargin)
 
-  val sample4 = Sample(
+  Sample(
     name = "package",
     source = "package a.b { class C1; class C2 }",
     json =
@@ -104,7 +163,27 @@ object Samples {
          |  {"sym": ["pkt:a", "pkt:b", "cl:C2", "def:<init>"], "uses": ["pkt:a", "pkt:b", "cl:C2"]},
          |  {"sym": ["pkt:a", "pkt:b", "cl:C2", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]}
          |]""".stripMargin,
-    graph = None,
+    graph = Some(
+      """|Graph 'package': 9 nodes, 8 edges
+         |Nodes:
+         |  - 
+         |  - pk:a
+         |  - pkt:a.pk:b
+         |  - pkt:a.pkt:b.cl:C1
+         |  - pkt:scala.tp:AnyRef
+         |  - pkt:a.pkt:b.cl:C1.def:<init>
+         |  - pkt:java.pkt:lang.cl:Object.def:<init>
+         |  - pkt:a.pkt:b.cl:C2
+         |  - pkt:a.pkt:b.cl:C2.def:<init>
+         |Edges:
+         |  -  -[Uses]-> pk:a
+         |  -  -[Uses]-> pkt:a.pk:b
+         |  - pkt:a.pkt:b.cl:C1 -[Extends]-> pkt:scala.tp:AnyRef
+         |  - pkt:a.pkt:b.cl:C1.def:<init> -[Uses]-> pkt:a.pkt:b.cl:C1
+         |  - pkt:a.pkt:b.cl:C1.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
+         |  - pkt:a.pkt:b.cl:C2 -[Extends]-> pkt:scala.tp:AnyRef
+         |  - pkt:a.pkt:b.cl:C2.def:<init> -[Uses]-> pkt:a.pkt:b.cl:C2
+         |  - pkt:a.pkt:b.cl:C2.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>""".stripMargin),
     tree =
       """|package:
          |└── a.b.C1
@@ -115,7 +194,7 @@ object Samples {
          |""".stripMargin)
 
   // this is the sample in the readme
-  val sample5 = Sample(
+  Sample(
     name = "readme",
     source = "object Dep1 { final val x = 42 }; object Dep2 { val x = Dep1.x }",
     json =
