@@ -19,9 +19,8 @@ object GraphTests {
 class GraphTests extends FunSuite {
   for {
     sample <- Samples.samples
-    _ <- sample.graph
   } test(sample.name) {
-    assertResult(sample.graph.get) {
+    assertResult(sample.graph) {
       GraphTests.toGraphString(sample.name, sample.json)
     }
   }

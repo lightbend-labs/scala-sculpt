@@ -10,7 +10,7 @@ case class Sample(
   name: String,
   source: String,
   json: String,
-  graph: Option[String],  // Option because it can get tedious to always include
+  graph: String,
   tree: String
 ) {
   Samples.samples += this
@@ -32,8 +32,8 @@ object Samples {
           @      ${triple(code)},
           @    json =
           @      ${triple(json)},
-          @    graph = Some(
-          @      ${triple(graph)}),
+          @    graph =
+          @      ${triple(graph)},
           @    tree =
           @      ${triple(tree)})""".stripMargin('@')
     println(result)
@@ -50,7 +50,7 @@ object Samples {
          |  {"sym": ["o:O", "def:<init>"], "uses": ["o:O"]},
          |  {"sym": ["o:O", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]}
          |]""".stripMargin,
-    graph = Some(
+    graph =
       """|Graph 'lone object': 4 nodes, 3 edges
          |Nodes:
          |  - o:O
@@ -60,7 +60,7 @@ object Samples {
          |Edges:
          |  - o:O -[Extends]-> pkt:scala.tp:AnyRef
          |  - o:O.def:<init> -[Uses]-> o:O
-         |  - o:O.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>""".stripMargin),
+         |  - o:O.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>""".stripMargin,
     tree = """|lone object:
               |└── O
               |    └── scala.AnyRef
@@ -82,7 +82,7 @@ object Samples {
          |  {"sym": ["cl:C2", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
          |  {"sym": ["tr:T"], "extends": ["pkt:scala", "tp:AnyRef"]}
          |]""".stripMargin,
-    graph = Some(
+    graph =
       """|Graph 'two subclasses': 7 nodes, 9 edges
          |Nodes:
          |  - cl:C1
@@ -101,7 +101,7 @@ object Samples {
          |  - cl:C2 -[Extends]-> tr:T
          |  - cl:C2.def:<init> -[Uses]-> cl:C2
          |  - cl:C2.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
-         |  - tr:T -[Extends]-> pkt:scala.tp:AnyRef""".stripMargin),
+         |  - tr:T -[Extends]-> pkt:scala.tp:AnyRef""".stripMargin,
     tree =
       """|two subclasses:
          |└── C1
@@ -127,7 +127,7 @@ object Samples {
          |  {"sym": ["tr:T2"], "extends": ["pkt:scala", "tp:AnyRef"]},
          |  {"sym": ["tr:T2", "def:x"], "uses": ["tr:T1"]}
          |]""".stripMargin,
-    graph = Some(
+    graph =
       """|Graph 'circular dependency': 5 nodes, 4 edges
          |Nodes:
          |  - tr:T1
@@ -139,7 +139,7 @@ object Samples {
          |  - tr:T1 -[Extends]-> pkt:scala.tp:AnyRef
          |  - tr:T1.def:x -[Uses]-> tr:T2
          |  - tr:T2 -[Extends]-> pkt:scala.tp:AnyRef
-         |  - tr:T2.def:x -[Uses]-> tr:T1""".stripMargin),
+         |  - tr:T2.def:x -[Uses]-> tr:T1""".stripMargin,
     tree =
       """|circular dependency:
          |└── T1
@@ -163,7 +163,7 @@ object Samples {
          |  {"sym": ["pkt:a", "pkt:b", "cl:C2", "def:<init>"], "uses": ["pkt:a", "pkt:b", "cl:C2"]},
          |  {"sym": ["pkt:a", "pkt:b", "cl:C2", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]}
          |]""".stripMargin,
-    graph = Some(
+    graph =
       """|Graph 'package': 9 nodes, 8 edges
          |Nodes:
          |  - 
@@ -183,7 +183,7 @@ object Samples {
          |  - pkt:a.pkt:b.cl:C1.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
          |  - pkt:a.pkt:b.cl:C2 -[Extends]-> pkt:scala.tp:AnyRef
          |  - pkt:a.pkt:b.cl:C2.def:<init> -[Uses]-> pkt:a.pkt:b.cl:C2
-         |  - pkt:a.pkt:b.cl:C2.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>""".stripMargin),
+         |  - pkt:a.pkt:b.cl:C2.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>""".stripMargin,
     tree =
       """|package:
          |└── a.b.C1
@@ -211,7 +211,7 @@ object Samples {
          |  {"sym": ["o:Dep2", "def:x"], "uses": ["pkt:scala", "cl:Int"]},
          |  {"sym": ["o:Dep2", "t:x"], "uses": ["pkt:scala", "cl:Int"]}
          |]""".stripMargin,
-    graph = Some(
+    graph =
       """|Graph 'readme': 11 nodes, 11 edges
          |Nodes:
          |  - o:Dep1
@@ -236,7 +236,7 @@ object Samples {
          |  - o:Dep2.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
          |  - o:Dep2.def:x -[Uses]-> o:Dep2.t:x
          |  - o:Dep2.def:x -[Uses]-> pkt:scala.cl:Int
-         |  - o:Dep2.t:x -[Uses]-> pkt:scala.cl:Int""".stripMargin),
+         |  - o:Dep2.t:x -[Uses]-> pkt:scala.cl:Int""".stripMargin,
     tree =
       """|readme:
          |└── Dep1
