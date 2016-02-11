@@ -7,13 +7,16 @@ case class Sample(
   source: String,
   json: String,
   graph: Option[String],  // Option because it can get tedious to always include
-  tree: String)
+  tree: String
+) {
+  Samples.samples += this
+}
 
 object Samples {
 
-  lazy val samples = Seq(sample1, sample2, sample3, sample4, sample5)
+  val samples = collection.mutable.Buffer.empty[Sample]
 
-  val sample1 = Sample(
+  Sample(
     name = "lone object",
     source = "object O",
     json =
@@ -39,7 +42,7 @@ object Samples {
               |└── scala.AnyRef
               |""".stripMargin)
 
-  val sample2 = Sample(
+  Sample(
     name = "two subclasses",
     source = "trait T; class C1 extends T; class C2 extends T",
     json =
@@ -89,7 +92,7 @@ object Samples {
          |        └── scala.AnyRef
          |""".stripMargin)
 
-  val sample3 = Sample(
+  Sample(
     name = "circular dependency",
     source = "trait T1 { def x: T2 }; trait T2 { def x: T1 }",
     json =
@@ -121,7 +124,7 @@ object Samples {
          |    └── scala.AnyRef
          |""".stripMargin)
 
-  val sample4 = Sample(
+  Sample(
     name = "package",
     source = "package a.b { class C1; class C2 }",
     json =
@@ -166,7 +169,7 @@ object Samples {
          |""".stripMargin)
 
   // this is the sample in the readme
-  val sample5 = Sample(
+  Sample(
     name = "readme",
     source = "object Dep1 { final val x = 42 }; object Dep2 { val x = Dep1.x }",
     json =
