@@ -5,23 +5,24 @@ import model._
 
 import org.scalatest.FunSuite
 
-class GraphTests extends FunSuite {
-
-  def check(sample: Sample): Unit = {
+object GraphTests {
+  // also used by Samples.main
+  def toGraphString(name: String, json: String): String = {
     import spray.json._
     import ModelJsonProtocol._
-    val dependencies = sample.json.parseJson.convertTo[Seq[FullDependency]]
-    val graph = Graph.apply(sample.name, dependencies)
-    assertResult(sample.graph.get) {
-      graph.fullString
-    }
+    val dependencies = json.parseJson.convertTo[Seq[FullDependency]]
+    val graph = Graph.apply(name, dependencies)
+    graph.fullString
   }
+}
 
+class GraphTests extends FunSuite {
   for {
     sample <- Samples.samples
     _ <- sample.graph
   } test(sample.name) {
-    check(sample)
+    assertResult(sample.graph.get) {
+      GraphTests.toGraphString(sample.name, sample.json)
+    }
   }
-
 }
