@@ -2,6 +2,10 @@
 
 package com.typesafe.tools.sculpt
 
+// to add a new sample (or update an existing one):
+//   test:runMain com.typesafe.tools.sculpt.Samples name <source code>
+// and paste the results below
+
 case class Sample(
   name: String,
   source: String,
@@ -13,6 +17,27 @@ case class Sample(
 }
 
 object Samples {
+
+  def main(args: Array[String]): Unit = {
+    val (name, code) = (args.head, args.tail.mkString(" "))
+    val json = Scaffold.analyze(code)
+    val graph = GraphTests.toGraphString(name, json)
+    val tree = TreeTests.toTreeString(name, json) + "\n"
+    def triple(s: String): String =
+      s.lines.mkString("    \"\"\"|", "\n             |", "\"\"\".stripMargin")
+    val result =
+      s"""@  Sample(
+          @    name = "$name",
+          @    source =
+          @      ${triple(code)},
+          @    json =
+          @      ${triple(json)},
+          @    graph = Some(
+          @      ${triple(graph)}),
+          @    tree =
+          @      ${triple(tree)})""".stripMargin('@')
+    println(result)
+  }
 
   val samples = collection.mutable.Buffer.empty[Sample]
 

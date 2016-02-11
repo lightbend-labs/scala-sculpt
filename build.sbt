@@ -18,6 +18,9 @@ libraryDependencies ++= Seq(
 // weird problems
 fork in Test := true
 
+// so the output of `test:runMain ...Samples` doesn't get tagged with [info]
+outputStrategy in Test := Some(StdoutOutput)
+
 scalacOptions ++= Seq(
   "-deprecation",
   "-unchecked",
