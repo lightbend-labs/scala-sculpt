@@ -1,4 +1,4 @@
-// Copyright (C) 2015 Typesafe Inc. <http://typesafe.com>
+// Copyright (C) 2015-2016 Typesafe Inc. <http://typesafe.com>
 
 package com.typesafe.tools.sculpt
 import model._
