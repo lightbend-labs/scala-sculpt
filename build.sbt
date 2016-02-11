@@ -14,6 +14,8 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 )
 
+// so we can run the Scala compiler during integration testing without
+// weird problems
 fork in Test := true
 
 scalacOptions ++= Seq(
