@@ -2,6 +2,8 @@
 
 package com.typesafe.tools.sculpt
 
+import model._
+
 // to add a new sample (or update an existing one):
 //   test:runMain com.typesafe.tools.sculpt.Samples name <source code>
 // and paste the results below
@@ -10,6 +12,7 @@ case class Sample(
   name: String,
   source: String,
   json: String,
+  classJson: String,
   graph: String,
   tree: String
 ) {
@@ -19,12 +22,16 @@ case class Sample(
 object Samples {
 
   def main(args: Array[String]): Unit = {
+    import spray.json._
+    import ModelJsonProtocol._
     val (name, code) = (args.head, args.tail.mkString(" "))
     val json = Scaffold.analyze(code)
-    val graph = GraphTests.toGraphString(name, json)
+    val graph = GraphTests.toGraph(name, json).fullString
+    val deps = json.parseJson.convertTo[Seq[FullDependency]]
+    val classJson = FullDependenciesPrinter.print(ClassMode(deps).toJson)
     val tree = TreeTests.toTreeString(name, json) + "\n"
     def triple(s: String): String =
-      s.lines.mkString("    \"\"\"|", "\n             |", "\"\"\".stripMargin")
+      s.lines.mkString("\"\"\"|", "\n         |", "\"\"\".stripMargin")
     val result =
       s"""@  Sample(
           @    name = "$name",
@@ -34,6 +41,8 @@ object Samples {
           @      ${triple(json)},
           @    graph =
           @      ${triple(graph)},
+          @    classJson =
+          @      ${triple(classJson)},
           @    tree =
           @      ${triple(tree)})""".stripMargin('@')
     println(result)
@@ -41,14 +50,21 @@ object Samples {
 
   val samples = collection.mutable.Buffer.empty[Sample]
 
+  // test:runMain com.typesafe.tools.sculpt.Samples "lone object" "object O"
   Sample(
     name = "lone object",
-    source = "object O",
+    source =
+      """|object O""".stripMargin,
     json =
       """|[
          |  {"sym": ["o:O"], "extends": ["pkt:scala", "tp:AnyRef"]},
          |  {"sym": ["o:O", "def:<init>"], "uses": ["o:O"]},
          |  {"sym": ["o:O", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]}
+         |]""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["o:O"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["o:O"], "uses": ["pkt:scala", "tp:AnyRef"]}
          |]""".stripMargin,
     graph =
       """|Graph 'lone object': 4 nodes, 3 edges
@@ -61,15 +77,18 @@ object Samples {
          |  - o:O -[Extends]-> pkt:scala.tp:AnyRef
          |  - o:O.def:<init> -[Uses]-> o:O
          |  - o:O.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>""".stripMargin,
-    tree = """|lone object:
-              |└── O
-              |    └── scala.AnyRef
-              |└── scala.AnyRef
-              |""".stripMargin)
+    tree =
+      """|lone object:
+         |└── O
+         |    └── scala.AnyRef
+         |└── scala.AnyRef
+         |""".stripMargin)
 
+  // test:runMain com.typesafe.tools.sculpt.Samples "two subclasses" "trait T; class C1 extends T; class C2 extends T"
   Sample(
     name = "two subclasses",
-    source = "trait T; class C1 extends T; class C2 extends T",
+    source =
+      """|trait T; class C1 extends T; class C2 extends T""".stripMargin,
     json =
       """|[
          |  {"sym": ["cl:C1"], "extends": ["pkt:scala", "tp:AnyRef"]},
@@ -81,6 +100,16 @@ object Samples {
          |  {"sym": ["cl:C2", "def:<init>"], "uses": ["cl:C2"]},
          |  {"sym": ["cl:C2", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
          |  {"sym": ["tr:T"], "extends": ["pkt:scala", "tp:AnyRef"]}
+         |]""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["cl:C1"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["cl:C1"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["cl:C1"], "uses": ["tr:T"]},
+         |  {"sym": ["cl:C2"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["cl:C2"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["cl:C2"], "uses": ["tr:T"]},
+         |  {"sym": ["tr:T"], "uses": ["pkt:scala", "tp:AnyRef"]}
          |]""".stripMargin,
     graph =
       """|Graph 'two subclasses': 7 nodes, 9 edges
@@ -117,15 +146,24 @@ object Samples {
          |        └── scala.AnyRef
          |""".stripMargin)
 
+  // test:runMain com.typesafe.tools.sculpt.Samples "circular dependency" "trait T1 { def x: T2 }; trait T2 { def x: T1 }"
   Sample(
     name = "circular dependency",
-    source = "trait T1 { def x: T2 }; trait T2 { def x: T1 }",
+    source =
+      """|trait T1 { def x: T2 }; trait T2 { def x: T1 }""".stripMargin,
     json =
       """|[
          |  {"sym": ["tr:T1"], "extends": ["pkt:scala", "tp:AnyRef"]},
          |  {"sym": ["tr:T1", "def:x"], "uses": ["tr:T2"]},
          |  {"sym": ["tr:T2"], "extends": ["pkt:scala", "tp:AnyRef"]},
          |  {"sym": ["tr:T2", "def:x"], "uses": ["tr:T1"]}
+         |]""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["tr:T1"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["tr:T1"], "uses": ["tr:T2"]},
+         |  {"sym": ["tr:T2"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["tr:T2"], "uses": ["tr:T1"]}
          |]""".stripMargin,
     graph =
       """|Graph 'circular dependency': 5 nodes, 4 edges
@@ -149,9 +187,11 @@ object Samples {
          |    └── scala.AnyRef
          |""".stripMargin)
 
+  // test:runMain com.typesafe.tools.sculpt.Samples "package" "package a.b { class C1; class C2 }"
   Sample(
     name = "package",
-    source = "package a.b { class C1; class C2 }",
+    source =
+      """|package a.b { class C1; class C2 }""".stripMargin,
     json =
       """|[
          |  {"sym": [], "uses": ["pk:a"]},
@@ -162,6 +202,13 @@ object Samples {
          |  {"sym": ["pkt:a", "pkt:b", "cl:C2"], "extends": ["pkt:scala", "tp:AnyRef"]},
          |  {"sym": ["pkt:a", "pkt:b", "cl:C2", "def:<init>"], "uses": ["pkt:a", "pkt:b", "cl:C2"]},
          |  {"sym": ["pkt:a", "pkt:b", "cl:C2", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]}
+         |]""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["pkt:a", "pkt:b", "cl:C1"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["pkt:a", "pkt:b", "cl:C1"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["pkt:a", "pkt:b", "cl:C2"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["pkt:a", "pkt:b", "cl:C2"], "uses": ["pkt:scala", "tp:AnyRef"]}
          |]""".stripMargin,
     graph =
       """|Graph 'package': 9 nodes, 8 edges
@@ -193,10 +240,69 @@ object Samples {
          |    └── scala.AnyRef
          |""".stripMargin)
 
+  // test:runMain com.typesafe.tools.sculpt.Samples "nested class" "trait T; class C { class D extends T }"
+  Sample(
+    name = "nested class",
+    source =
+      """|trait T; class C { class D extends T }""".stripMargin,
+    json =
+      """|[
+         |  {"sym": ["cl:C"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["cl:C", "cl:D"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["cl:C", "cl:D"], "extends": ["tr:T"]},
+         |  {"sym": ["cl:C", "cl:D", "def:<init>"], "uses": ["cl:C"]},
+         |  {"sym": ["cl:C", "cl:D", "def:<init>"], "uses": ["cl:C", "cl:D"]},
+         |  {"sym": ["cl:C", "cl:D", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
+         |  {"sym": ["cl:C", "def:<init>"], "uses": ["cl:C"]},
+         |  {"sym": ["cl:C", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
+         |  {"sym": ["tr:T"], "extends": ["pkt:scala", "tp:AnyRef"]}
+         |]""".stripMargin,
+    graph =
+      """|Graph 'nested class': 7 nodes, 9 edges
+         |Nodes:
+         |  - cl:C
+         |  - pkt:scala.tp:AnyRef
+         |  - cl:C.cl:D
+         |  - tr:T
+         |  - cl:C.cl:D.def:<init>
+         |  - pkt:java.pkt:lang.cl:Object.def:<init>
+         |  - cl:C.def:<init>
+         |Edges:
+         |  - cl:C -[Extends]-> pkt:scala.tp:AnyRef
+         |  - cl:C.cl:D -[Extends]-> pkt:scala.tp:AnyRef
+         |  - cl:C.cl:D -[Extends]-> tr:T
+         |  - cl:C.cl:D.def:<init> -[Uses]-> cl:C
+         |  - cl:C.cl:D.def:<init> -[Uses]-> cl:C.cl:D
+         |  - cl:C.cl:D.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
+         |  - cl:C.def:<init> -[Uses]-> cl:C
+         |  - cl:C.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
+         |  - tr:T -[Extends]-> pkt:scala.tp:AnyRef""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["cl:C"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["cl:C"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["cl:C"], "uses": ["tr:T"]},
+         |  {"sym": ["tr:T"], "uses": ["pkt:scala", "tp:AnyRef"]}
+         |]""".stripMargin,
+    tree =
+      """|nested class:
+         |└── C
+         |    └── scala.AnyRef
+         |└── scala.AnyRef
+         |└── C.D
+         |    └── scala.AnyRef
+         |    └── T
+         |        └── scala.AnyRef
+         |└── T
+         |    └── scala.AnyRef
+         |""".stripMargin)
+
   // this is the sample in the readme
+  // test:runMain com.typesafe.tools.sculpt.Samples "readme" "object Dep1 { final val x = 42 }; object Dep2 { val x = Dep1.x }"
   Sample(
     name = "readme",
-    source = "object Dep1 { final val x = 42 }; object Dep2 { val x = Dep1.x }",
+    source =
+      """|object Dep1 { final val x = 42 }; object Dep2 { val x = Dep1.x }""".stripMargin,
     json =
       """|[
          |  {"sym": ["o:Dep1"], "extends": ["pkt:scala", "tp:AnyRef"]},
@@ -210,6 +316,15 @@ object Samples {
          |  {"sym": ["o:Dep2", "def:x"], "uses": ["o:Dep2", "t:x"]},
          |  {"sym": ["o:Dep2", "def:x"], "uses": ["pkt:scala", "cl:Int"]},
          |  {"sym": ["o:Dep2", "t:x"], "uses": ["pkt:scala", "cl:Int"]}
+         |]""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["o:Dep1"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["o:Dep1"], "uses": ["pkt:scala", "cl:Int"]},
+         |  {"sym": ["o:Dep1"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["o:Dep2"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["o:Dep2"], "uses": ["pkt:scala", "cl:Int"]},
+         |  {"sym": ["o:Dep2"], "uses": ["pkt:scala", "tp:AnyRef"]}
          |]""".stripMargin,
     graph =
       """|Graph 'readme': 11 nodes, 11 edges

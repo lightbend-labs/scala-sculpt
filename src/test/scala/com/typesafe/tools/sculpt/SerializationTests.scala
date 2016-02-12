@@ -8,19 +8,10 @@ import spray.json._
 
 class SerializationTests extends FunSuite {
 
-  // Stefan didn't like the appearance of the output with either of
-  // spray-json's formatters (`compactPrint` and `prettyPrint`),
-  // so he rolled his own in FullDependenciesPrinter
-  def print(js: JsValue): String = {
-    val sb = new java.lang.StringBuilder
-    FullDependenciesPrinter.print(js, sb)
-    sb.toString
-  }
-
   // JSON -> JSValue -> JSON
   def roundTripThroughJsonASTs(sample: Sample): Unit = {
     assertResult(sample.json) {
-      print(sample.json.parseJson)
+      FullDependenciesPrinter.print(sample.json.parseJson)
     }
   }
 
@@ -30,7 +21,7 @@ class SerializationTests extends FunSuite {
     val dependencies =
       sample.json.parseJson.convertTo[Seq[FullDependency]]
     assertResult(sample.json) {
-      print(dependencies.toJson)
+      FullDependenciesPrinter.print(dependencies.toJson)
     }
   }
 

@@ -7,12 +7,11 @@ import org.scalatest.FunSuite
 
 object GraphTests {
   // also used by Samples.main
-  def toGraphString(name: String, json: String): String = {
+  def toGraph(name: String, json: String): Graph = {
     import spray.json._
     import ModelJsonProtocol._
     val dependencies = json.parseJson.convertTo[Seq[FullDependency]]
-    val graph = Graph.apply(name, dependencies)
-    graph.fullString
+    Graph.apply(name, dependencies)
   }
 }
 
@@ -21,7 +20,7 @@ class GraphTests extends FunSuite {
     sample <- Samples.samples
   } test(sample.name) {
     assertResult(sample.graph) {
-      GraphTests.toGraphString(sample.name, sample.json)
+      GraphTests.toGraph(sample.name, sample.json).fullString
     }
   }
 }
