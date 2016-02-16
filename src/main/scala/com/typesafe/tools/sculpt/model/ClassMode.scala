@@ -26,7 +26,9 @@ object ClassMode {
 
   def promote(path: Path): Option[Path] =
     path.elems.span(_.kind == EntityKind.PackageType) match {
-      case (packages, clazz +: _) if isClassKind(clazz.kind) =>
+      case (packages, clazz +: _) =>
+        assert(isClassKind(clazz.kind),
+          s"unexpected entity kind after packages in $path")
         Some(Path(packages :+ clazz))
       case _ =>
         None
