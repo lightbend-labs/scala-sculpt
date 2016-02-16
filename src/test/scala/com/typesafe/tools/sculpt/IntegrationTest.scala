@@ -15,7 +15,7 @@ object Scaffold {
     file.getAbsolutePath
   }
 
-  val settings: Settings = {
+  def defaultSettings: Settings = {
     val settings = new Settings
     settings.processArgumentString(
       s"-usejavacp -Xplugin:$classes -Xplugin-require:sculpt")
@@ -24,9 +24,15 @@ object Scaffold {
     settings
   }
 
-  def analyze(code: String): String = {
+  def analyze(code: String, classMode: Boolean = false): String = {
     val out = java.io.File.createTempFile("sculpt", "json", null)
-    settings.processArgumentString(s"-P:sculpt:out=$out")
+    val modeSetting =
+      if (classMode)
+        " -P:sculpt:mode=class"
+      else
+        ""
+    val settings = defaultSettings
+    settings.processArgumentString(s"-P:sculpt:out=$out$modeSetting")
     val sources = List(new BatchSourceFile("<test>", code))
     val compiler = new Global(settings)
     (new compiler.Run).compileSources(sources)
@@ -41,6 +47,9 @@ class IntegrationTest extends FunSuite {
   def check(s: Sample): Unit = {
     assertResult(s.json) {
       Scaffold.analyze(s.source)
+    }
+    assertResult(s.classJson) {
+      Scaffold.analyze(s.source, classMode = true)
     }
   }
   for (sample <- Samples.samples)

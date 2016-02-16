@@ -20,6 +20,8 @@ abstract class ExtractDependencies extends PluginComponent {
   /** The output file to write to, or None for stdout */
   def outputPath: Option[File]
 
+  def classMode: Boolean
+
   override def description = "Extract Dependency Phase for Scala Sculpt"
 
   /** the following two members override abstract members in Transform */
@@ -44,7 +46,11 @@ abstract class ExtractDependencies extends PluginComponent {
         (createFullDependencies(deps, DependencyKind.Uses) ++ createFullDependencies(inheritDeps, DependencyKind.Extends))
           .filterNot(d => d.from == d.to)
           .groupBy(identity).map { case (d, l) => d.copy(count = l.size) }.toSeq.sortBy(_.toString)
-      val json = fullDependencies.toJson
+      val json =
+        if (classMode)
+          ClassMode(fullDependencies).toJson
+        else
+          fullDependencies.toJson
       writeOutput(FullDependenciesPrinter(json))
     }
 

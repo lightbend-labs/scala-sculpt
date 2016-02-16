@@ -5,7 +5,17 @@ package com.typesafe.tools.sculpt.model
 import spray.json._
 import java.lang.StringBuilder
 
+// Stefan didn't like the appearance of the output with either of spray-json's formatters
+// (`compactPrint` and `prettyPrint`), so he rolled his own here
+
 object FullDependenciesPrinter extends JsonPrinter {
+
+  def print(js: JsValue): String = {
+    val sb = new java.lang.StringBuilder
+    print(js, sb)
+    sb.toString
+  }
+
   override def print(x: JsValue, sb: StringBuilder): Unit =
     printRootArray(x.asInstanceOf[JsArray].elements, sb)
 
