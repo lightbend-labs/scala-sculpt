@@ -24,13 +24,13 @@ object ClassMode {
   // a class-level path (or None).  The too-specific stuff might be a method,
   // inner class, etc.
 
-  def promote(path: Path): Option[Path] = {
-    val (packages, rest) = path.elems.span(_.kind == EntityKind.PackageType)
-    if (rest.nonEmpty && isClassKind(rest.head.kind))
-      Some(Path(packages :+ rest.head))
-    else
-      None
-  }
+  def promote(path: Path): Option[Path] =
+    path.elems.span(_.kind == EntityKind.PackageType) match {
+      case (packages, clazz +: _) if isClassKind(clazz.kind) =>
+        Some(Path(packages :+ clazz))
+      case _ =>
+        None
+    }
 
   // The inclusion of EntityKind.Type may seem questionable, but it's needed
   // in order to pull in things like `extends scala.AnyRef` since AnyRef is
