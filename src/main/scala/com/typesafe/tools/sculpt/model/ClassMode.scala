@@ -4,9 +4,6 @@ package com.typesafe.tools.sculpt.model
 
 object ClassMode {
   def apply(deps: Seq[FullDependency]): Seq[FullDependency] = {
-    def isClassKind(kind: EntityKind): Boolean =
-      Seq(EntityKind.Trait, EntityKind.Class, EntityKind.ModuleClass, EntityKind.Type)
-        .contains(kind)
     def promote(path: Path): Option[Path] = {
       val (packages, rest) = path.elems.span(_.kind == EntityKind.PackageType)
       if (rest.nonEmpty && isClassKind(rest.head.kind))
@@ -24,4 +21,7 @@ object ClassMode {
     candidates.distinct
       .sortBy(_.toString)  // helps human-readability
   }
+  private val isClassKind: EntityKind => Boolean =
+    Set[EntityKind](
+      EntityKind.Trait, EntityKind.Class, EntityKind.ModuleClass, EntityKind.Type)
 }
