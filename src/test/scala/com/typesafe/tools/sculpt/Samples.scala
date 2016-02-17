@@ -14,7 +14,8 @@ case class Sample(
   json: String,
   classJson: String,
   graph: String,
-  tree: String
+  tree: String,
+  cycles: String = ""
 ) {
   Samples.samples += this
 }
@@ -30,6 +31,7 @@ object Samples {
     val deps = json.parseJson.convertTo[Seq[FullDependency]]
     val classJson = FullDependenciesPrinter.print(ClassMode(deps).toJson)
     val tree = TreeTests.toTreeString(name, json) + "\n"
+    val cycles = ComponentsTests.toCycleString(name, classJson)
     def triple(s: String): String =
       s.lines.mkString("\"\"\"|", "\n         |", "\"\"\".stripMargin")
     val result =
@@ -44,7 +46,9 @@ object Samples {
           @    classJson =
           @      ${triple(classJson)},
           @    tree =
-          @      ${triple(tree)})""".stripMargin('@')
+          @      ${triple(tree)},
+          @    cycles =
+          @      ${triple(cycles)})""".stripMargin('@')
     println(result)
   }
 
@@ -82,7 +86,10 @@ object Samples {
          |└── O
          |    └── scala.AnyRef
          |└── scala.AnyRef
-         |""".stripMargin)
+         |""".stripMargin,
+    cycles =
+      """|""".stripMargin
+)
 
   // test:runMain com.typesafe.tools.sculpt.Samples "two subclasses" "trait T; class C1 extends T; class C2 extends T"
   Sample(
@@ -144,7 +151,9 @@ object Samples {
          |    └── scala.AnyRef
          |    └── T
          |        └── scala.AnyRef
-         |""".stripMargin)
+         |""".stripMargin,
+    cycles =
+      """|""".stripMargin)
 
   // test:runMain com.typesafe.tools.sculpt.Samples "circular dependency" "trait T1 { def x: T2 }; trait T2 { def x: T1 }"
   Sample(
@@ -185,7 +194,62 @@ object Samples {
          |└── scala.AnyRef
          |└── T2
          |    └── scala.AnyRef
-         |""".stripMargin)
+         |""".stripMargin,
+    cycles =
+      """|tr:T1 tr:T2""".stripMargin)
+
+  // test:runMain com.typesafe.tools.sculpt.Samples "3-cycle" "trait T1 { def t: T2 }; trait T2 { def t: T3 }; trait T3 { def t: T1 }"
+  Sample(
+    name = "3-cycle",
+    source =
+      """|trait T1 { def t: T2 }; trait T2 { def t: T3 }; trait T3 { def t: T1 }""".stripMargin,
+    json =
+      """|[
+         |  {"sym": ["tr:T1"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["tr:T1", "def:t"], "uses": ["tr:T2"]},
+         |  {"sym": ["tr:T2"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["tr:T2", "def:t"], "uses": ["tr:T3"]},
+         |  {"sym": ["tr:T3"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["tr:T3", "def:t"], "uses": ["tr:T1"]}
+         |]""".stripMargin,
+    graph =
+      """|Graph '3-cycle': 7 nodes, 6 edges
+         |Nodes:
+         |  - tr:T1
+         |  - pkt:scala.tp:AnyRef
+         |  - tr:T1.def:t
+         |  - tr:T2
+         |  - tr:T2.def:t
+         |  - tr:T3
+         |  - tr:T3.def:t
+         |Edges:
+         |  - tr:T1 -[Extends]-> pkt:scala.tp:AnyRef
+         |  - tr:T1.def:t -[Uses]-> tr:T2
+         |  - tr:T2 -[Extends]-> pkt:scala.tp:AnyRef
+         |  - tr:T2.def:t -[Uses]-> tr:T3
+         |  - tr:T3 -[Extends]-> pkt:scala.tp:AnyRef
+         |  - tr:T3.def:t -[Uses]-> tr:T1""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["tr:T1"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["tr:T1"], "uses": ["tr:T2"]},
+         |  {"sym": ["tr:T2"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["tr:T2"], "uses": ["tr:T3"]},
+         |  {"sym": ["tr:T3"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["tr:T3"], "uses": ["tr:T1"]}
+         |]""".stripMargin,
+    tree =
+      """|3-cycle:
+         |└── T1
+         |    └── scala.AnyRef
+         |└── scala.AnyRef
+         |└── T2
+         |    └── scala.AnyRef
+         |└── T3
+         |    └── scala.AnyRef
+         |""".stripMargin,
+    cycles =
+      """|tr:T1 tr:T2 tr:T3""".stripMargin)
 
   // test:runMain com.typesafe.tools.sculpt.Samples "package" "package a.b { class C1; class C2 }"
   Sample(
@@ -238,7 +302,9 @@ object Samples {
          |└── scala.AnyRef
          |└── a.b.C2
          |    └── scala.AnyRef
-         |""".stripMargin)
+         |""".stripMargin,
+    cycles =
+      """|""".stripMargin)
 
   // test:runMain com.typesafe.tools.sculpt.Samples "nested class" "trait T; class C { class D extends T }"
   Sample(
@@ -295,7 +361,9 @@ object Samples {
          |        └── scala.AnyRef
          |└── T
          |    └── scala.AnyRef
-         |""".stripMargin)
+         |""".stripMargin,
+    cycles =
+      """|""".stripMargin)
 
   // this is the sample in the readme
   // test:runMain com.typesafe.tools.sculpt.Samples "readme" "object Dep1 { final val x = 42 }; object Dep2 { val x = Dep1.x }"
@@ -360,6 +428,8 @@ object Samples {
          |└── scala.Int
          |└── Dep2
          |    └── scala.AnyRef
-         |""".stripMargin)
+         |""".stripMargin,
+    cycles =
+      """|""".stripMargin)
 
 }
