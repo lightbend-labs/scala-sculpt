@@ -4,62 +4,89 @@ package com.typesafe.tools.sculpt.model
 
 // implements Tarjan's strongly connected components algorithm; see
 // https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm
-// code is a line-by-line transliteration of the pseudocode into Scala
 
-object Components {
+// parameterized on the node type, so the whole thing can be as abstract as possible.
+// `<: AnyRef` is an efficiency hack: it lets use `ne` instead of `!=`
 
-  // TODO take just the nodes and edges iterables, instead of the Graph object?
+class Components[T <: AnyRef] {
 
-  def apply(g: Graph): Seq[Set[Node]] = {
+  def apply(nodes: Iterable[T])(successors: T => Iterable[T]): Vector[Set[T]] = {
 
-    val components = collection.mutable.Buffer.empty[Set[Node]]
+    val components = Vector.newBuilder[Set[T]]
+    val indexer = new Indexer
+    val stack = new Stack
+    val lowestReachable = new Minimizer
 
-    var index = 0
-    val stack = collection.mutable.Stack.empty[Node]
-    val indices = collection.mutable.Map.empty[Node, Int]
-    val lowLinks = collection.mutable.Map.empty[Node, Int]
-    val onStack = collection.mutable.Set.empty[Node]
-
-    def strongConnect(v: Node): Unit = {
-
-      val component = collection.mutable.Set.empty[Node]
-
-      // Set the depth index for v to the smallest unused index
-      indices(v) = index
-      lowLinks(v) = index
-      index += 1
-      stack.push(v)
-      onStack += v
-
-      // Consider successors of v
-      for (w <- v.edgesOut.map(_.to))
-        if (!indices.contains(w)) {
-          // Successor w has not yet been visited; recurse on it
-          strongConnect(w)
-          lowLinks(v) = lowLinks(v) min lowLinks(w)
+    def recurse(node: T): Unit = {
+      lowestReachable.update(node, indexer.tag(node))
+      stack.push(node)
+      for (node2 <- successors(node))
+        if (!indexer.contains(node2)) {
+          recurse(node2)
+          lowestReachable.update(node, lowestReachable(node2))
         }
-        else if (onStack(w))
-          // Successor w is in stack S and hence in the current SCC
-          lowLinks(v) = lowLinks(v) min indices(w)
-
-      // If v is a root node, pop the stack and generate an SCC
-      if (lowLinks(v) == indices(v)) {
-        // start a new strongly connected component
-        var w: Node = null
-        do {
-          w = stack.pop()
-          onStack -= w
-          component += w
-        } while (w ne v);
-        components += component.toSet
-      }
+        else if (stack.contains(node2))
+          lowestReachable.update(node, indexer(node2))
+      if (indexer(node) == lowestReachable(node))
+        components += stack.popUntil(node)
     }
 
-    for (v <- g.nodes)
-      if (!indices.contains(v))
-        strongConnect(v)
+    for (node <- nodes)
+      if (!indexer.contains(node))
+        recurse(node)
 
-    components.toSeq
+    components.result
 
   }
+
+  // remembers lowest number seen for each item
+  private class Minimizer {
+    private val mins = collection.mutable.Map.empty[T, Int]
+    def update(x: T, n: Int): Unit =
+      if (mins.contains(x))
+        mins(x) = mins(x) min n
+      else
+        mins(x) = n
+    def apply(x: T): Int =
+      mins(x)
+  }
+
+  // assigns successive numbers to items; queryable
+  private class Indexer {
+    private val n = Iterator.from(0)
+    private val indices = collection.mutable.Map.empty[T, Int]
+    def tag(x: T): Int = {
+      val next = n.next()
+      indices(x) = next
+      next
+    }
+    def apply(x: T): Int =
+      indices(x)
+    def contains(x: T): Boolean =
+      indices.contains(x)
+  }
+
+  // stack plus set, so we can check for membership cheaply
+  private class Stack {
+    private val stack = collection.mutable.Stack.empty[T]
+    private val set = collection.mutable.Set.empty[T]
+    def contains(x: T): Boolean =
+      set(x)
+    def push(x: T): Unit = {
+      stack.push(x)
+      set += x
+    }
+    def pop(): T = {
+      val result = stack.pop()
+      set -= result
+      result
+    }
+    // pop stack til we hit x;
+    // return popped values including x itself
+    def popUntil(x: T): Set[T] =
+      (Iterator.continually(pop())
+        .takeWhile(_ ne x)
+        .toSet) + x
+  }
+
 }

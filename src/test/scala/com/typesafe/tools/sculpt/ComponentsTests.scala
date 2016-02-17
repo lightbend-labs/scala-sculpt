@@ -13,7 +13,7 @@ object ComponentsTests {
     val deps = json.parseJson.convertTo[Seq[FullDependency]]
     val classJson = FullDependenciesPrinter.print(ClassMode(deps).toJson)
     val graph = GraphTests.toGraph(name, classJson)
-    Components(graph)
+    (new Components)(graph.nodes)(_.edgesOut.map(_.to))
       .filter(_.size > 1)
       .map(_.toSeq.sortBy(_.toString).mkString(" "))
       .sortBy(_.toString)
