@@ -395,7 +395,6 @@ object Samples {
          |  - o:O.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>""".stripMargin,
     classJson =
       """|[
-         |  {"sym": ["o:O"], "uses": ["pk:scala"]},
          |  {"sym": ["o:O"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
          |  {"sym": ["o:O"], "uses": ["pkt:scala", "ov:None"]},
          |  {"sym": ["o:O"], "uses": ["pkt:scala", "tp:AnyRef"]}

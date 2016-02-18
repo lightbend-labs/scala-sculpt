@@ -7,6 +7,7 @@ object ClassMode {
   // promotes all of the dependencies to class level:
   // * discarding self-dependencies
   // * collapsing the uses/extends distinction
+  // * ignoring dependencies on packages
   // * setting all counts to 1
   //   (real counts handling is possible future work)
   // * eliminating duplicates
@@ -28,14 +29,21 @@ object ClassMode {
   // inner class, etc.
 
   def promote(path: Path): Option[Path] =
-    path.elems.span(_.kind == EntityKind.PackageType) match {
-      case (packages, clazz +: _) =>
-        assert(isClassKind(clazz.kind),
-          s"unexpected entity kind after packages in $path")
-        Some(Path(packages :+ clazz))
+    path.elems.span(isPackage) match {
+      case (packages, next +: _) =>
+        next.kind match {
+          case k if isClassKind(k) =>
+            Some(Path(packages :+ next))
+          case _ =>
+            throw new IllegalArgumentException(
+              s"unexpected entity kind after packages in $path")
+        }
       case _ =>
         None
     }
+
+  def isPackage(entity: Entity): Boolean =
+    entity.kind == EntityKind.Package || entity.kind == EntityKind.PackageType
 
   // The inclusion of EntityKind.Type may seem questionable, but it's needed
   // in order to pull in things like `extends scala.AnyRef` since AnyRef is
