@@ -4,10 +4,13 @@ package com.typesafe.tools.sculpt.model
 
 object ClassMode {
 
-  // promotes all of the dependencies to class level, discarding self-dependencies,
-  // collapsing the uses/extends distinction, setting all counts to 1, and eliminating
-  // duplicates. (real counts handling could be a future todo.)  sorting the output
-  // helps testability and helps human-readability of the resulting JSON.
+  // promotes all of the dependencies to class level:
+  // * discarding self-dependencies
+  // * collapsing the uses/extends distinction
+  // * setting all counts to 1
+  //   (real counts handling is possible future work)
+  // * eliminating duplicates
+  // * sorting, for testability and human-readability
 
   def apply(deps: Seq[FullDependency]): Seq[FullDependency] = {
     val promoted =
