@@ -410,6 +410,58 @@ object Samples {
     cycles =
       """|""".stripMargin)
 
+  // test:runMain com.typesafe.tools.sculpt.Samples "pattern match" "object O { 0 match { case _ => () } }"
+  // re: the strange dependency on `["t:x"]`,
+  // see https://github.com/typesafehub/scala-sculpt/issues/28
+  Sample(
+    name = "pattern match",
+    source =
+      """|object O { 0 match { case _ => () } }""".stripMargin,
+    json =
+      """|[
+         |  {"sym": ["o:O"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["o:O"], "uses": ["o:O", "t:<local O>", "def:matchEnd3"]},
+         |  {"sym": ["o:O"], "uses": ["t:x"]},
+         |  {"sym": ["o:O", "def:<init>"], "uses": ["o:O"]},
+         |  {"sym": ["o:O", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
+         |  {"sym": ["o:O", "t:<local O>", "t:x1"], "uses": ["pkt:scala", "cl:Int"]}
+         |]""".stripMargin,
+    graph =
+      """|Graph 'pattern match': 8 nodes, 6 edges
+         |Nodes:
+         |  - o:O
+         |  - pkt:scala.tp:AnyRef
+         |  - o:O.t:<local O>.def:matchEnd3
+         |  - t:x
+         |  - o:O.def:<init>
+         |  - pkt:java.pkt:lang.cl:Object.def:<init>
+         |  - o:O.t:<local O>.t:x1
+         |  - pkt:scala.cl:Int
+         |Edges:
+         |  - o:O -[Extends]-> pkt:scala.tp:AnyRef
+         |  - o:O -[Uses]-> o:O.t:<local O>.def:matchEnd3
+         |  - o:O -[Uses]-> t:x
+         |  - o:O.def:<init> -[Uses]-> o:O
+         |  - o:O.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
+         |  - o:O.t:<local O>.t:x1 -[Uses]-> pkt:scala.cl:Int""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["o:O"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["o:O"], "uses": ["pkt:scala", "cl:Int"]},
+         |  {"sym": ["o:O"], "uses": ["pkt:scala", "tp:AnyRef"]}
+         |]""".stripMargin,
+    tree =
+      """|pattern match:
+         |└── O
+         |    └── scala.AnyRef
+         |    └── O.<local O>.matchEnd3
+         |    └── x
+         |└── scala.AnyRef
+         |└── scala.Int
+         |""".stripMargin,
+    cycles =
+      """|""".stripMargin)
+
   // this is the sample in the readme
   // test:runMain com.typesafe.tools.sculpt.Samples "readme" "object Dep1 { final val x = 42 }; object Dep2 { val x = Dep1.x }"
   Sample(

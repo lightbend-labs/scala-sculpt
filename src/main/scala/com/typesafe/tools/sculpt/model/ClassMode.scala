@@ -7,7 +7,7 @@ object ClassMode {
   // promotes all of the dependencies to class level:
   // * discarding self-dependencies
   // * collapsing the uses/extends distinction
-  // * ignoring dependencies on packages
+  // * ignoring irrelevant pseudo-dependencies
   // * setting all counts to 1
   //   (real counts handling is possible future work)
   // * eliminating duplicates
@@ -34,6 +34,10 @@ object ClassMode {
         next.kind match {
           case k if isClassKind(k) =>
             Some(Path(packages :+ next))
+          // ignore strange dependencies on bare terms;
+          // see https://github.com/typesafehub/scala-sculpt/issues/28
+          case EntityKind.Term if packages.isEmpty =>
+            None
           case _ =>
             throw new IllegalArgumentException(
               s"unexpected entity kind after packages in $path")
