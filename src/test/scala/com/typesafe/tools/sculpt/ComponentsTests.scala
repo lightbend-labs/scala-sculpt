@@ -8,20 +8,14 @@ import org.scalatest.FunSuite
 object ComponentsTests {
   // also used by Samples.main
   def toCycleString(name: String, json: String): String = {
-    val nodes: Iterable[Node] = {
+    val graph: Graph = {
       import spray.json._
       import ModelJsonProtocol._
       val deps = json.parseJson.convertTo[Seq[FullDependency]]
       val classJson = FullDependenciesPrinter.print(ClassMode(deps).toJson)
-      GraphTests.toGraph(name, classJson).nodes
+      GraphTests.toGraph(name, classJson)
     }
-    val components = (new Components)(nodes)(_.edgesOut.map(_.to))
-    components
-      .sortBy(-_.size)
-      .takeWhile(_.size > 1)
-      .map(_.toSeq.sortBy(_.toString).mkString(" "))
-      .sortBy(_.toString)
-      .mkString("\n")
+    graph.cyclesString
   }
 }
 
