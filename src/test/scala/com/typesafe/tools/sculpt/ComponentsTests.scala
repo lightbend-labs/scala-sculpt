@@ -15,8 +15,10 @@ object ComponentsTests {
       val classJson = FullDependenciesPrinter.print(ClassMode(deps).toJson)
       GraphTests.toGraph(name, classJson).nodes
     }
-    (new Components)(nodes)(_.edgesOut.map(_.to))
-      .filter(_.size > 1)
+    val components = (new Components)(nodes)(_.edgesOut.map(_.to))
+    components
+      .sortBy(-_.size)
+      .takeWhile(_.size > 1)
       .map(_.toSeq.sortBy(_.toString).mkString(" "))
       .sortBy(_.toString)
       .mkString("\n")
