@@ -40,6 +40,8 @@ object ClassMode {
 
   private val isClassKind: EntityKind => Boolean =
     Set[EntityKind](
-      EntityKind.Trait, EntityKind.Class, EntityKind.ModuleClass, EntityKind.Type)
+      EntityKind.Trait, EntityKind.Class,
+      EntityKind.Module, EntityKind.ModuleClass,
+      EntityKind.Type)
 
 }

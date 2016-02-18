@@ -365,6 +365,52 @@ object Samples {
     cycles =
       """|""".stripMargin)
 
+  // test:runMain com.typesafe.tools.sculpt.Samples "uses module" "object O { None }"
+  Sample(
+    name = "uses module",
+    source =
+      """|object O { None }""".stripMargin,
+    json =
+      """|[
+         |  {"sym": ["o:O"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["o:O"], "uses": ["pk:scala"]},
+         |  {"sym": ["o:O"], "uses": ["pkt:scala", "ov:None"]},
+         |  {"sym": ["o:O", "def:<init>"], "uses": ["o:O"]},
+         |  {"sym": ["o:O", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]}
+         |]""".stripMargin,
+    graph =
+      """|Graph 'uses module': 6 nodes, 5 edges
+         |Nodes:
+         |  - o:O
+         |  - pkt:scala.tp:AnyRef
+         |  - pk:scala
+         |  - pkt:scala.ov:None
+         |  - o:O.def:<init>
+         |  - pkt:java.pkt:lang.cl:Object.def:<init>
+         |Edges:
+         |  - o:O -[Extends]-> pkt:scala.tp:AnyRef
+         |  - o:O -[Uses]-> pk:scala
+         |  - o:O -[Uses]-> pkt:scala.ov:None
+         |  - o:O.def:<init> -[Uses]-> o:O
+         |  - o:O.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["o:O"], "uses": ["pk:scala"]},
+         |  {"sym": ["o:O"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["o:O"], "uses": ["pkt:scala", "ov:None"]},
+         |  {"sym": ["o:O"], "uses": ["pkt:scala", "tp:AnyRef"]}
+         |]""".stripMargin,
+    tree =
+      """|uses module:
+         |└── O
+         |    └── scala.AnyRef
+         |    └── scala
+         |    └── scala.None
+         |└── scala.AnyRef
+         |""".stripMargin,
+    cycles =
+      """|""".stripMargin)
+
   // this is the sample in the readme
   // test:runMain com.typesafe.tools.sculpt.Samples "readme" "object Dep1 { final val x = 42 }; object Dep2 { val x = Dep1.x }"
   Sample(
