@@ -12,14 +12,14 @@ trait Node {
   def edgesIn: Iterable[Edge]
   def edgesOut: Iterable[Edge]
   def connectTo(to: Node, kind: DependencyKind, count: Int): Edge
-  def remove: Boolean
+  def remove(): Boolean
 }
 
 trait Edge {
   def from: Node
   def to: Node
   def kind: DependencyKind
-  def remove: Boolean
+  def remove(): Boolean
   def count: Int
   override def toString = s"$from -[$kind]-> $to"
 }
@@ -60,10 +60,10 @@ class Graph(val name: String) { graph =>
       }))
     }
 
-    def remove: Boolean = {
+    def remove(): Boolean = {
       if(dead) false else {
-        edgesIn.foreach(_.remove)
-        edgesOut.foreach(_.remove)
+        edgesIn.foreach(_.remove())
+        edgesOut.foreach(_.remove())
         graph.nodesMap.remove(path)
         dead = true
         true
@@ -82,7 +82,7 @@ class Graph(val name: String) { graph =>
       val name = n.path.nameString
       if(s.exists { p =>
         name == p || name.startsWith(p + ".")
-      }) n.remove
+      }) n.remove()
     }
   }
 
@@ -95,7 +95,7 @@ class Graph(val name: String) { graph =>
     def to: Node = ensureNotDead(_to)
     def kind = ensureNotDead(_kind)
     def count = ensureNotDead(_count)
-    def remove: Boolean =
+    def remove(): Boolean =
       if(dead) false else {
         _from.out.remove((_to, _kind))
         _to.in.remove((_from, kind))
