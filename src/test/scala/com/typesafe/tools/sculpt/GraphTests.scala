@@ -37,9 +37,8 @@ class GraphTests extends FunSuite {
     assert(graph.fullString.contains("Dep2"))
     assertResult((15, 19))((graph.nodes.size, graph.edges.size))
     graph.removePaths("Dep2", "java.lang")
-    assertResult((9, 8))((graph.nodes.size, graph.edges.size))
     val expected =
-      """|Graph 'readme': 9 nodes, 8 edges
+      """|Graph 'readme': 8 nodes, 8 edges
          |Nodes:
          |  - o:Dep1
          |  - pkt:scala.tp:AnyRef
@@ -49,7 +48,6 @@ class GraphTests extends FunSuite {
          |  - pkt:scala.cl:Int
          |  - o:Dep1.def:y
          |  - o:Dep1.t:y
-         |  - ov:Dep1
          |Edges:
          |  - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
          |  - o:Dep1.def:<init> -[Uses]-> o:Dep1

@@ -78,11 +78,18 @@ class Graph(val name: String) { graph =>
     * no quotations). Descendents of the specified paths are also removed. */
   def removePaths(simplePaths: String*): Unit = {
     val s = simplePaths.toSet
-    nodes.toSeq.foreach { n =>
+    // first remove matching nodes
+    nodes.foreach { n =>
       val name = n.path.nameString
       if(s.exists { p =>
         name == p || name.startsWith(p + ".")
       }) n.remove()
+    }
+    // after the first round of removals, we may now have "orphan" nodes
+    // with no incoming or outgoing edges. we'll remove those too
+    nodes.foreach { n =>
+      if (n.edgesIn.isEmpty && n.edgesOut.isEmpty)
+        n.remove()
     }
   }
 
