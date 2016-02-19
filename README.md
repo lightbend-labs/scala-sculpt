@@ -219,18 +219,57 @@ Here's an example portion of a cycle report for a larger sample codebase:
 
 We can explore the effect of removing edges from the graph using `removePaths`:
 
-    scala> res0.removePaths("Dep2", java.lang")
+    scala> res0.removePaths("Dep2", "java.lang")
 
     scala> println(res0.fullString)
+    Graph 'dep.json': 9 nodes, 8 edges
+    Nodes:
+      - o:Dep1
+      - pkt:scala.tp:AnyRef
+      - o:Dep1.def:<init>
+      - o:Dep1.def:x
+      - o:Dep1.t:x
+      - pkt:scala.cl:Int
+      - o:Dep1.def:y
+      - o:Dep1.t:y
+      - ov:Dep1
+    Edges:
+      - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
+      - o:Dep1.def:<init> -[Uses]-> o:Dep1
+      - o:Dep1.def:x -[Uses]-> o:Dep1.t:x
+      - o:Dep1.def:x -[Uses]-> pkt:scala.cl:Int
+      - o:Dep1.def:y -[Uses]-> o:Dep1.t:y
+      - o:Dep1.def:y -[Uses]-> pkt:scala.cl:Int
+      - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
+      - o:Dep1.t:y -[Uses]-> pkt:scala.cl:Int
 
 Saving the graph back to a JSON model and loading it again:
 
     scala> save(res0, "dep2.json")
 
     scala> load("dep2.json")
-    res5: com.typesafe.tools.sculpt.model.Graph = Graph 'dep2.json': 3 nodes, 2 edges
+    res5: com.typesafe.tools.sculpt.model.Graph = Graph 'dep2.json': 8 nodes, 8 edges
 
     scala> println(res5.fullString)
+    Graph 'dep2.json': 8 nodes, 8 edges
+    Nodes:
+      - o:Dep1
+      - pkt:scala.tp:AnyRef
+      - o:Dep1.def:<init>
+      - o:Dep1.def:x
+      - o:Dep1.t:x
+      - pkt:scala.cl:Int
+      - o:Dep1.def:y
+      - o:Dep1.t:y
+    Edges:
+      - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
+      - o:Dep1.def:<init> -[Uses]-> o:Dep1
+      - o:Dep1.def:x -[Uses]-> o:Dep1.t:x
+      - o:Dep1.def:x -[Uses]-> pkt:scala.cl:Int
+      - o:Dep1.def:y -[Uses]-> o:Dep1.t:y
+      - o:Dep1.def:y -[Uses]-> pkt:scala.cl:Int
+      - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
+      - o:Dep1.t:y -[Uses]-> pkt:scala.cl:Int
 
 ## Future work
 

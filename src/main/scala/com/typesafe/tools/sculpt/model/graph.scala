@@ -75,13 +75,13 @@ class Graph(val name: String) { graph =>
 
   /** Remove all nodes (and their connecting edges) whose path matches one of the
     * specified simple path names (i.e. kinds are ignored, names concatenated by '.',
-    * no quotations). Descendants of the specified paths are also removed. */
+    * no quotations). Descendents of the specified paths are also removed. */
   def removePaths(simplePaths: String*): Unit = {
     val s = simplePaths.toSet
     nodes.toSeq.foreach { n =>
-      val simple = n.path.simpleString
+      val name = n.path.nameString
       if(s.exists { p =>
-        simple == p || simple.startsWith(p + ".")
+        name == p || name.startsWith(p + ".")
       }) n.remove
     }
   }
