@@ -38,7 +38,8 @@ case class Entity(name: String, kind: EntityKind) {
 case class Path(elems: Seq[Entity]) {
   override def toString = elems.mkString(".")
   def kindString = elems.lastOption.map(_.kind.prefix).getOrElse("")
-  def simpleString = s"$kindString:${elems.map(_.name).mkString(".")}"
+  def nameString = elems.map(_.name).mkString(".")
+  def simpleString = s"$kindString:$nameString"
 }
 
 object Entity {
