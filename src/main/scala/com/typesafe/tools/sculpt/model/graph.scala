@@ -4,6 +4,9 @@ package com.typesafe.tools.sculpt.model
 
 import scala.collection.mutable
 
+// abstract Node and Edge traits are agnostic about whether the
+// underlying data structures are mutable or immutable
+
 trait Node {
   def path: Path
   def edgesIn: Iterable[Edge]
@@ -20,6 +23,9 @@ trait Edge {
   def count: Int
   override def toString = s"$from -[$kind]-> $to"
 }
+
+// the rest of the code in this file is a particular implementation
+// of Node and Edge built on mutable data structures
 
 class Graph(val name: String) { graph =>
 
@@ -110,6 +116,18 @@ class Graph(val name: String) { graph =>
     for(e <- edges) b.append(s"\n  - $e")
     b.result()
   }
+
+  /** Cycles in the graph, in descending order by size */
+  def cycles: Vector[Set[Node]] =
+    (new Components)(nodes)(_.edgesOut.map(_.to))
+      .sortBy(-_.size)
+      .takeWhile(_.size > 1)
+
+  /** Human-readable report of cycles in the graph */
+  def cyclesString: String =
+    cycles
+      .map(nodes => s"[${nodes.size}] ${nodes.toSeq.map(_.path.simpleString).sortBy(_.toString).mkString(" ")}")
+      .mkString("\n")
 
   def toJsonModel: Seq[FullDependency] =
     edgesSet.map(e => FullDependency(e.from.path, e.to.path, e.kind, e.count)).toSeq.sortBy(_.toString)

@@ -35,28 +35,32 @@ Then you can do e.g.:
 
 Assuming `Dep.scala` contains this source code:
 
-```
-object Dep1 { final val x = 42 }
-object Dep2 { val x = Dep1.x }
-```
+    object Dep1 { val x = 42; val y = Dep2.z }
+    object Dep2 { val z = Dep1.x }
 
 then the command line shown above will generate this `dep.json` file:
 
-```
-[
-  {"sym": ["o:Dep1"], "extends": ["pkt:scala", "tp:AnyRef"]},
-  {"sym": ["o:Dep1", "def:<init>"], "uses": ["o:Dep1"]},
-  {"sym": ["o:Dep1", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
-  {"sym": ["o:Dep1", "def:x"], "uses": ["pkt:scala", "cl:Int"]},
-  {"sym": ["o:Dep1", "t:x"], "uses": ["pkt:scala", "cl:Int"]},
-  {"sym": ["o:Dep2"], "extends": ["pkt:scala", "tp:AnyRef"]},
-  {"sym": ["o:Dep2", "def:<init>"], "uses": ["o:Dep2"]},
-  {"sym": ["o:Dep2", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
-  {"sym": ["o:Dep2", "def:x"], "uses": ["o:Dep2", "t:x"]},
-  {"sym": ["o:Dep2", "def:x"], "uses": ["pkt:scala", "cl:Int"]},
-  {"sym": ["o:Dep2", "t:x"], "uses": ["pkt:scala", "cl:Int"]}
-]
-```
+    [
+      {"sym": ["o:Dep1"], "extends": ["pkt:scala", "tp:AnyRef"]},
+      {"sym": ["o:Dep1", "def:<init>"], "uses": ["o:Dep1"]},
+      {"sym": ["o:Dep1", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
+      {"sym": ["o:Dep1", "def:x"], "uses": ["o:Dep1", "t:x"]},
+      {"sym": ["o:Dep1", "def:x"], "uses": ["pkt:scala", "cl:Int"]},
+      {"sym": ["o:Dep1", "def:y"], "uses": ["o:Dep1", "t:y"]},
+      {"sym": ["o:Dep1", "def:y"], "uses": ["pkt:scala", "cl:Int"]},
+      {"sym": ["o:Dep1", "t:x"], "uses": ["pkt:scala", "cl:Int"]},
+      {"sym": ["o:Dep1", "t:y"], "uses": ["o:Dep2", "def:z"]},
+      {"sym": ["o:Dep1", "t:y"], "uses": ["ov:Dep2"]},
+      {"sym": ["o:Dep1", "t:y"], "uses": ["pkt:scala", "cl:Int"]},
+      {"sym": ["o:Dep2"], "extends": ["pkt:scala", "tp:AnyRef"]},
+      {"sym": ["o:Dep2", "def:<init>"], "uses": ["o:Dep2"]},
+      {"sym": ["o:Dep2", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
+      {"sym": ["o:Dep2", "def:z"], "uses": ["o:Dep2", "t:z"]},
+      {"sym": ["o:Dep2", "def:z"], "uses": ["pkt:scala", "cl:Int"]},
+      {"sym": ["o:Dep2", "t:z"], "uses": ["o:Dep1", "def:x"]},
+      {"sym": ["o:Dep2", "t:z"], "uses": ["ov:Dep1"]},
+      {"sym": ["o:Dep2", "t:z"], "uses": ["pkt:scala", "cl:Int"]}
+    ]
 
 Each line in the JSON file represents an edge between two symbols in a
 dependency graph.
@@ -71,13 +75,15 @@ So for example, in the above source code, we see that `Dep1` extends
 
     {"sym": ["o:Dep1"], "extends": ["pkt:scala", "tp:AnyRef"]},
 
-And we see that `Dep1` uses `scala.Int` in two places:
+And we see that `Dep1` uses `scala.Int` in three places:
 
     {"sym": ["o:Dep1", "def:x"], "uses": ["pkt:scala", "cl:Int"]},
+    {"sym": ["o:Dep1", "def:y"], "uses": ["pkt:scala", "cl:Int"]},
     {"sym": ["o:Dep1", "t:x"], "uses": ["pkt:scala", "cl:Int"]},
 
-from this we see that `scala.Int` is used as the declared return type
-of `Dep1.x`, and as the inferred type of the body of `Dep1.x`.
+from this we see that `scala.Int` is used as the return type of
+`Dep1.x` and `Dep1.y`, and as the inferred type of the body of
+`Dep1.y`.
 
 For brevity, the following abbreviations are used in the JSON output:
 
@@ -118,17 +124,21 @@ invocation would look like:
 
     scalac -Xplugin:scala-sculpt_2.11-0.1.3.jar \
       -Xplugin-require:sculpt \
-      -P:sculpt:out=dep.json \
+      -P:sculpt:out=classes.json \
       -P:sculpt:mode=class \
       Dep.scala
 
 on the same source code used in the example above, this command line
-generates this `dep.json` file:
+generates this `classes.json` file:
 
     [
+      {"sym": ["o:Dep1"], "uses": ["o:Dep2"]},
+      {"sym": ["o:Dep1"], "uses": ["ov:Dep2"]},
       {"sym": ["o:Dep1"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
       {"sym": ["o:Dep1"], "uses": ["pkt:scala", "cl:Int"]},
       {"sym": ["o:Dep1"], "uses": ["pkt:scala", "tp:AnyRef"]},
+      {"sym": ["o:Dep2"], "uses": ["o:Dep1"]},
+      {"sym": ["o:Dep2"], "uses": ["ov:Dep1"]},
       {"sym": ["o:Dep2"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
       {"sym": ["o:Dep2"], "uses": ["pkt:scala", "cl:Int"]},
       {"sym": ["o:Dep2"], "uses": ["pkt:scala", "tp:AnyRef"]}
@@ -158,92 +168,76 @@ Now in a Scala 2.11 REPL with the same JARs on the classpath:
 
 If we load `dep.json` as follows, we'll see the following graph:
 
-```
-scala> import com.typesafe.tools.sculpt.cmd._
-import com.typesafe.tools.sculpt.cmd._
+    scala> import com.typesafe.tools.sculpt.cmd._
+    import com.typesafe.tools.sculpt.cmd._
 
-scala> load("dep.json")
-res0: com.typesafe.tools.sculpt.model.Graph = Graph 'dep.json': 11 nodes, 11 edges
+    scala> load("dep.json")
+    res0: com.typesafe.tools.sculpt.model.Graph = Graph 'dep.json': 15 nodes, 19 edges
 
-scala> println(res0.fullString)
-Graph 'dep.json': 11 nodes, 11 edges
-Nodes:
-  - o:Dep1
-  - pkt:scala.tp:AnyRef
-  - o:Dep1.def:<init>
-  - pkt:java.pkt:lang.cl:Object.def:<init>
-  - o:Dep1.def:x
-  - pkt:scala.cl:Int
-  - o:Dep1.t:x
-  - o:Dep2
-  - o:Dep2.def:<init>
-  - o:Dep2.def:x
-  - o:Dep2.t:x
-Edges:
-  - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
-  - o:Dep1.def:<init> -[Uses]-> o:Dep1
-  - o:Dep1.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
-  - o:Dep1.def:x -[Uses]-> pkt:scala.cl:Int
-  - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
-  - o:Dep2 -[Extends]-> pkt:scala.tp:AnyRef
-  - o:Dep2.def:<init> -[Uses]-> o:Dep2
-  - o:Dep2.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
-  - o:Dep2.def:x -[Uses]-> o:Dep2.t:x
-  - o:Dep2.def:x -[Uses]-> pkt:scala.cl:Int
-  - o:Dep2.t:x -[Uses]-> pkt:scala.cl:Int
-```
+    scala> println(res0.fullString)
+    Graph 'dep.json': 15 nodes, 19 edges
+    Nodes:
+      - o:Dep1
+      - pkt:scala.tp:AnyRef
+      ...
+    Edges:
+      - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
+      - o:Dep1.def:<init> -[Uses]-> o:Dep1
+      ...
 
-and we can explore the effect of removing edges from the graph using `removePaths`:
+#### Cycles report
 
-```
-scala> res0.removePaths("Dep2", "java.lang")
+When untangling dependencies, circular dependencies are always
+especially problematic. We can identify these, list their contents,
+and sort them by the total number of classes in the cycle.
 
-scala> println(res0.fullString)
-Graph 'dep.json': 6 nodes, 4 edges
-Nodes:
-  - o:Dep1
-  - pkt:scala.tp:AnyRef
-  - o:Dep1.def:<init>
-  - o:Dep1.def:x
-  - pkt:scala.cl:Int
-  - o:Dep1.t:x
-Edges:
-  - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
-  - o:Dep1.def:<init> -[Uses]-> o:Dep1
-  - o:Dep1.def:x -[Uses]-> pkt:scala.cl:Int
-  - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
-```
+The cycles report assumes that the plugin was run in "class mode".
+
+Using the same `classes.json` file generated in the "class mode"
+example above:
+
+    scala> import com.typesafe.tools.sculpt.cmd._
+    import com.typesafe.tools.sculpt.cmd._
+
+    scala> load("classes.json")
+    res0: com.typesafe.tools.sculpt.model.Graph = Graph 'classes.json': 7 nodes, 10 edges
+
+    scala> println(res0.cyclesString)
+    [2] o:Dep1 o:Dep2
+
+The report shows that the codebase contains a single cycle of size 2,
+because `Dep1` and `Dep2` mutually reference each other.
+
+Here's an example portion of a cycle report for a larger sample codebase:
+
+    [8] tr:api.Agent tr:api.AgentSet tr:api.Link tr:api.Observer tr:api.Patch tr:api.TrailDrawerInterface tr:api.Turtle tr:api.World
+    [5] cl:workspace.AbstractWorkspace cl:workspace.DefaultFileManager cl:workspace.Evaluator o:workspace.AbstractWorkspaceTraits o:workspace.Benchmarker
+    [4] cl:agent.HorizCylinder cl:agent.Torus cl:agent.VertCylinder o:agent.Topology
+    [3] cl:agent.AgentSet cl:agent.ArrayAgentSet o:agent.AgentSet
+
+#### Modifying the graph
+
+We can explore the effect of removing edges from the graph using `removePaths`:
+
+    scala> res0.removePaths("Dep2", java.lang")
+
+    scala> println(res0.fullString)
 
 Saving the graph back to a JSON model and loading it again:
 
-```
-scala> save(res0, "dep2.json")
+    scala> save(res0, "dep2.json")
 
-scala> load("dep2.json")
-res5: com.typesafe.tools.sculpt.model.Graph = Graph 'dep2.json': 3 nodes, 2 edges
+    scala> load("dep2.json")
+    res5: com.typesafe.tools.sculpt.model.Graph = Graph 'dep2.json': 3 nodes, 2 edges
 
-scala> println(res5.fullString)
-Graph 'dep2.json': 6 nodes, 4 edges
-Nodes:
-  - o:Dep1
-  - pkt:scala.tp:AnyRef
-  - o:Dep1.def:<init>
-  - o:Dep1.def:x
-  - pkt:scala.cl:Int
-  - o:Dep1.t:x
-Edges:
-  - o:Dep1 -[Extends]-> pkt:scala.tp:AnyRef
-  - o:Dep1.def:<init> -[Uses]-> o:Dep1
-  - o:Dep1.def:x -[Uses]-> pkt:scala.cl:Int
-  - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
-```
+    scala> println(res5.fullString)
 
 ## Future work
 
 Possible future directions include:
 
-* identify layers and cycles
-* aggregation of dependency data at additional "zoom levels" (per-package, per-source-file)
+* identify layers
+* aggregation of dependency data at higher "zoom levels" (per-package, per-source-file)
 * user interface, e.g. via ScalaIDE integration
 * automatic identification of problematic dependencies
 * “what-if” analyses exploring the effect of proposed code changes

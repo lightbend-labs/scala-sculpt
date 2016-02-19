@@ -4,10 +4,14 @@ package com.typesafe.tools.sculpt.model
 
 object ClassMode {
 
-  // promotes all of the dependencies to class level, discarding self-dependencies,
-  // collapsing the uses/extends distinction, setting all counts to 1, and eliminating
-  // duplicates. (real counts handling could be a future todo.)  sorting the output
-  // helps testability and helps human-readability of the resulting JSON.
+  // promotes all of the dependencies to class level:
+  // * discarding self-dependencies
+  // * collapsing the uses/extends distinction
+  // * ignoring irrelevant pseudo-dependencies
+  // * setting all counts to 1
+  //   (real counts handling is possible future work)
+  // * eliminating duplicates
+  // * sorting, for testability and human-readability
 
   def apply(deps: Seq[FullDependency]): Seq[FullDependency] = {
     val promoted =
@@ -25,14 +29,25 @@ object ClassMode {
   // inner class, etc.
 
   def promote(path: Path): Option[Path] =
-    path.elems.span(_.kind == EntityKind.PackageType) match {
-      case (packages, clazz +: _) =>
-        assert(isClassKind(clazz.kind),
-          s"unexpected entity kind after packages in $path")
-        Some(Path(packages :+ clazz))
+    path.elems.span(isPackage) match {
+      case (packages, next +: _) =>
+        next.kind match {
+          case k if isClassKind(k) =>
+            Some(Path(packages :+ next))
+          // ignore strange dependencies on bare terms;
+          // see https://github.com/typesafehub/scala-sculpt/issues/28
+          case EntityKind.Term if packages.isEmpty =>
+            None
+          case _ =>
+            throw new IllegalArgumentException(
+              s"unexpected entity kind after packages in $path")
+        }
       case _ =>
         None
     }
+
+  def isPackage(entity: Entity): Boolean =
+    entity.kind == EntityKind.Package || entity.kind == EntityKind.PackageType
 
   // The inclusion of EntityKind.Type may seem questionable, but it's needed
   // in order to pull in things like `extends scala.AnyRef` since AnyRef is
@@ -40,6 +55,8 @@ object ClassMode {
 
   private val isClassKind: EntityKind => Boolean =
     Set[EntityKind](
-      EntityKind.Trait, EntityKind.Class, EntityKind.ModuleClass, EntityKind.Type)
+      EntityKind.Trait, EntityKind.Class,
+      EntityKind.Module, EntityKind.ModuleClass,
+      EntityKind.Type)
 
 }
