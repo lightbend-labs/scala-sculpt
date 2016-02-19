@@ -147,6 +147,12 @@ generates this `classes.json` file:
 Note that all of the nodes are top-level classes, traits, objects, or
 type aliases, and all of the edges are of type "uses".
 
+`-P:sculpt:mode=class` is provided as a convenience, but it isn't
+strictly needed, in that if you have already run Sculpt in default
+mode, you can convert detailed dependencies to class-level
+dependencies in the course of an interactive session.  This
+is demonstrated in the sample interactive session below.
+
 ## Graphs represented as case classes
 
 The same JAR that contains the plugin also contains a suite of case
@@ -185,24 +191,28 @@ If we load `dep.json` as follows, we'll see the following graph:
       - o:Dep1.def:<init> -[Uses]-> o:Dep1
       ...
 
+#### Converting to class-level dependencies
+
+If we're interested in class-level dependencies only, we can
+call `load` with `classMode = true` in order to aggregate the
+dependencies after loading:
+
+    scala> load("dep.json", classMode = true)
+    res2: com.typesafe.tools.sculpt.model.Graph = Graph 'dep.json': 7 nodes, 10 edges
+
 #### Cycles report
 
 When untangling dependencies, circular dependencies are always
 especially problematic. We can identify these, list their contents,
 and sort them by the total number of classes in the cycle.
 
-The cycles report assumes that the plugin was run in "class mode".
+The cycles report operates on class-level dependencies only, so you
+must either run the plugin in "class mode", or convert from default
+mode to class mode at load time:
 
-Using the same `classes.json` file generated in the "class mode"
-example above:
+Continuing the running example:
 
-    scala> import com.typesafe.tools.sculpt.cmd._
-    import com.typesafe.tools.sculpt.cmd._
-
-    scala> load("classes.json")
-    res0: com.typesafe.tools.sculpt.model.Graph = Graph 'classes.json': 7 nodes, 10 edges
-
-    scala> println(res0.cyclesString)
+    scala> println(res2.cyclesString)
     [2] o:Dep1 o:Dep2
 
 The report shows that the codebase contains a single cycle of size 2,

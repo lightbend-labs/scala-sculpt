@@ -15,9 +15,16 @@ package object cmd {
     s.parseJson.convertTo[Seq[FullDependency]]
   }
 
-  /** Load a Sculpt model JSON file and return the graph */
-  def load(path: String): Graph = {
-    val m = loadModel(path)
+  /** Load a Sculpt model JSON file and return the graph.
+    * If classMode is true, convert detailed dependencies
+    * to aggregated class-level dependencies. */
+  def load(path: String, classMode: Boolean = false): Graph = {
+    val m0 = loadModel(path)
+    val m =
+      if (classMode)
+        ClassMode(m0)
+      else
+        m0
     Graph(path, m)
   }
 
