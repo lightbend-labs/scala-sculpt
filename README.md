@@ -200,23 +200,49 @@ dependencies after loading:
     scala> load("dep.json", classMode = true)
     res2: com.typesafe.tools.sculpt.model.Graph = Graph 'dep.json': 7 nodes, 10 edges
 
-#### Cycles report
+#### Cycles and layers reports
 
 When untangling dependencies, circular dependencies are always
 especially problematic. We can identify these, list their contents,
-and sort them by the total number of classes in the cycle.
+sort them by the total number of classes in the cycle, or print
+them grouped into layers according to their dependency structure.
 
-The cycles report operates on class-level dependencies only, so you
-must either run the plugin in "class mode", or convert from default
-mode to class mode at load time:
+The cycles and layers reports operate on class-level dependencies
+only, so you must either run the plugin in "class mode", or convert
+from default mode to class mode at load time:
 
-Continuing the running example:
+Continuing the running example, here's a cycles report:
 
-    scala> println(res2.cyclesString)
+    scala> import com.typesafe.tools.sculpt.model.Cycles
+
+    scala> println(Cycles.cyclesString(res2.nodes))
     [2] o:Dep1 o:Dep2
 
 The report shows that the codebase contains a single cycle of size 2,
-because `Dep1` and `Dep2` mutually reference each other.
+because `Dep1` and `Dep2` mutually reference each other.  ("Cycles" of
+a single node are omitted.)
+
+And here's the layers report for the same code:
+
+    scala> println(res2.layersString)
+    layers =
+      """|[1] o:Dep1 o:Dep2
+         |[0] ov:Dep1
+         |[0] cl:java.lang.Object
+         |[0] cl:scala.Int
+         |[0] tp:scala.AnyRef
+         |[0] ov:Dep2
+
+The numbers are layer numbers, defined as follows:
+
+* layer 0: classes with no dependencies
+* layer 1: classes with only layer 0 dependencies
+* layer 2: classes with only layer 0 and 1 dependencies
+* ...
+
+Note that some concepts of layered architectures require that layer n
+accesses only layer n - 1 and not any lower layers; we are not making
+that assumption here.
 
 Here's an example portion of a cycle report for a larger sample codebase:
 
@@ -224,6 +250,20 @@ Here's an example portion of a cycle report for a larger sample codebase:
     [5] cl:workspace.AbstractWorkspace cl:workspace.DefaultFileManager cl:workspace.Evaluator o:workspace.AbstractWorkspaceTraits o:workspace.Benchmarker
     [4] cl:agent.HorizCylinder cl:agent.Torus cl:agent.VertCylinder o:agent.Topology
     [3] cl:agent.AgentSet cl:agent.ArrayAgentSet o:agent.AgentSet
+
+(The numbers are cycle sizes.)
+
+And here's part of the layer report for the same codebase:
+
+    [14] o:org.nlogo.headless.Main
+    [14] o:org.nlogo.headless.Shell
+    [13] o:org.nlogo.compile.middle.FrontMiddleBridge
+    [13] o:org.nlogo.headless.HeadlessWorkspace
+    [13] o:org.nlogo.mirror.ModelRunIO
+    [12] o:org.nlogo.compile.back.BackEnd
+    [12] o:org.nlogo.compile.middle.MiddleEnd
+
+showing just the topmost layers of the application.
 
 #### Modifying the graph
 
@@ -285,7 +325,6 @@ Saving the graph back to a JSON model and loading it again:
 
 Possible future directions include:
 
-* identify layers
 * aggregation of dependency data at higher "zoom levels" (per-package, per-source-file)
 * user interface, e.g. via ScalaIDE integration
 * automatic identification of problematic dependencies
