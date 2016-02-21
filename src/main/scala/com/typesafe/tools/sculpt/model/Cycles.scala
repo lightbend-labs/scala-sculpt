@@ -53,6 +53,7 @@ object Cycles {
         layer.map(cycleString)
           .filter(_.nonEmpty) // omit empty package
           .map(s => s"[$n] $s\n")
+          .sorted
           .mkString}
       .mkString
 
