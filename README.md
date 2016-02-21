@@ -133,12 +133,10 @@ generates this `classes.json` file:
 
     [
       {"sym": ["o:Dep1"], "uses": ["o:Dep2"]},
-      {"sym": ["o:Dep1"], "uses": ["ov:Dep2"]},
       {"sym": ["o:Dep1"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
       {"sym": ["o:Dep1"], "uses": ["pkt:scala", "cl:Int"]},
       {"sym": ["o:Dep1"], "uses": ["pkt:scala", "tp:AnyRef"]},
       {"sym": ["o:Dep2"], "uses": ["o:Dep1"]},
-      {"sym": ["o:Dep2"], "uses": ["ov:Dep1"]},
       {"sym": ["o:Dep2"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
       {"sym": ["o:Dep2"], "uses": ["pkt:scala", "cl:Int"]},
       {"sym": ["o:Dep2"], "uses": ["pkt:scala", "tp:AnyRef"]}
@@ -227,11 +225,9 @@ And here's the layers report for the same code:
     scala> println(res2.layersString)
     layers =
       """|[1] o:Dep1 o:Dep2
-         |[0] ov:Dep1
          |[0] cl:java.lang.Object
          |[0] cl:scala.Int
          |[0] tp:scala.AnyRef
-         |[0] ov:Dep2
 
 The numbers are layer numbers, defined as follows:
 
