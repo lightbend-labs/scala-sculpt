@@ -5,9 +5,9 @@ import model._
 
 import org.scalatest.FunSuite
 
-object ComponentsTests {
+object CyclesTests {
   // also used by Samples.main
-  def toCycleString(name: String, json: String): String = {
+  def toCyclesAndLayersStrings(name: String, json: String): (String, String) = {
     val graph: Graph = {
       import spray.json._
       import ModelJsonProtocol._
@@ -15,15 +15,16 @@ object ComponentsTests {
       val classJson = FullDependenciesPrinter.print(ClassMode(deps).toJson)
       GraphTests.toGraph(name, classJson)
     }
-    graph.cyclesString
+    (Cycles.cyclesString(graph.nodes),
+     Cycles.layersString(graph.nodes))
   }
 }
 
-class ComponentsTests extends FunSuite {
+class CyclesTests extends FunSuite {
   for (sample <- Samples.samples)
     test(sample.name) {
-      assertResult(sample.cycles) {
-        ComponentsTests.toCycleString(sample.name, sample.json)
-      }
+      val (cycles, layers) = CyclesTests.toCyclesAndLayersStrings(sample.name, sample.json)
+      assertResult(sample.cycles) { cycles }
+      assertResult(sample.layers) { layers }
     }
 }

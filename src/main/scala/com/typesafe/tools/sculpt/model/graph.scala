@@ -124,18 +124,6 @@ class Graph(val name: String) { graph =>
     b.result()
   }
 
-  /** Cycles in the graph, in descending order by size */
-  def cycles: Vector[Set[Node]] =
-    (new Components)(nodes)(_.edgesOut.map(_.to))
-      .sortBy(-_.size)
-      .takeWhile(_.size > 1)
-
-  /** Human-readable report of cycles in the graph */
-  def cyclesString: String =
-    cycles
-      .map(nodes => s"[${nodes.size}] ${nodes.toSeq.map(_.path.simpleString).sortBy(_.toString).mkString(" ")}")
-      .mkString("\n")
-
   def toJsonModel: Seq[FullDependency] =
     edgesSet.map(e => FullDependency(e.from.path, e.to.path, e.kind, e.count)).toSeq.sortBy(_.toString)
 }
