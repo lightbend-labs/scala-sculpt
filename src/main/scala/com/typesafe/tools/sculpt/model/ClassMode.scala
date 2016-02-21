@@ -7,6 +7,7 @@ object ClassMode {
   // promotes all of the dependencies to class level:
   // * discarding self-dependencies
   // * collapsing the uses/extends distinction
+  // * collapsing the Module/ModuleClass distinction
   // * ignoring irrelevant pseudo-dependencies
   // * setting all counts to 1
   //   (real counts handling is possible future work)
@@ -34,6 +35,9 @@ object ClassMode {
         next.kind match {
           case k if isClassKind(k) =>
             Some(Path(packages :+ next))
+          // collapse Module/ModuleClass distinction
+          case EntityKind.Module =>
+            Some(Path(packages :+ next.copy(kind = EntityKind.ModuleClass)))
           // ignore strange dependencies on bare terms;
           // see https://github.com/typesafehub/scala-sculpt/issues/28
           case EntityKind.Term if packages.isEmpty =>
@@ -56,7 +60,6 @@ object ClassMode {
   private val isClassKind: EntityKind => Boolean =
     Set[EntityKind](
       EntityKind.Trait, EntityKind.Class,
-      EntityKind.Module, EntityKind.ModuleClass,
-      EntityKind.Type)
+      EntityKind.ModuleClass, EntityKind.Type)
 
 }

@@ -429,7 +429,7 @@ object Samples {
     classJson =
       """|[
          |  {"sym": ["o:O"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
-         |  {"sym": ["o:O"], "uses": ["pkt:scala", "ov:None"]},
+         |  {"sym": ["o:O"], "uses": ["pkt:scala", "o:None"]},
          |  {"sym": ["o:O"], "uses": ["pkt:scala", "tp:AnyRef"]}
          |]""".stripMargin,
     tree =
@@ -445,7 +445,7 @@ object Samples {
     layers =
       """|[1] o:O
          |[0] cl:java.lang.Object
-         |[0] ov:scala.None
+         |[0] o:scala.None
          |[0] tp:scala.AnyRef
          |""".stripMargin)
 
@@ -576,12 +576,10 @@ object Samples {
     classJson =
       """|[
          |  {"sym": ["o:Dep1"], "uses": ["o:Dep2"]},
-         |  {"sym": ["o:Dep1"], "uses": ["ov:Dep2"]},
          |  {"sym": ["o:Dep1"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
          |  {"sym": ["o:Dep1"], "uses": ["pkt:scala", "cl:Int"]},
          |  {"sym": ["o:Dep1"], "uses": ["pkt:scala", "tp:AnyRef"]},
          |  {"sym": ["o:Dep2"], "uses": ["o:Dep1"]},
-         |  {"sym": ["o:Dep2"], "uses": ["ov:Dep1"]},
          |  {"sym": ["o:Dep2"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
          |  {"sym": ["o:Dep2"], "uses": ["pkt:scala", "cl:Int"]},
          |  {"sym": ["o:Dep2"], "uses": ["pkt:scala", "tp:AnyRef"]}
@@ -599,11 +597,9 @@ object Samples {
       """|[2] o:Dep1 o:Dep2""".stripMargin,
     layers =
       """|[1] o:Dep1 o:Dep2
-         |[0] ov:Dep1
          |[0] cl:java.lang.Object
          |[0] cl:scala.Int
          |[0] tp:scala.AnyRef
-         |[0] ov:Dep2
          |""".stripMargin)
 
 }
