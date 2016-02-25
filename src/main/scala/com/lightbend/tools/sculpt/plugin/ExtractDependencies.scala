@@ -1,6 +1,6 @@
-// Copyright (C) 2015-2016 Typesafe Inc. <http://typesafe.com>
+// Copyright (C) 2015-2016 Lightbend Inc. <http://lightbend.com>
 
-package com.typesafe.tools.sculpt.plugin
+package com.lightbend.tools.sculpt.plugin
 
 import scala.collection.mutable
 import scala.collection.mutable.HashSet
@@ -8,9 +8,9 @@ import scala.io.Codec
 import scala.tools.nsc
 import nsc.plugins._
 import scala.reflect.internal.Flags.{PACKAGE}
-import com.typesafe.tools.sculpt.model._
+import com.lightbend.tools.sculpt.model._
 import spray.json._
-import com.typesafe.tools.sculpt.model.ModelJsonProtocol._
+import com.lightbend.tools.sculpt.model.ModelJsonProtocol._
 import java.io.File
 
 // adapted from the incremental compiler

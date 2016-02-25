@@ -172,11 +172,11 @@ Now in a Scala 2.11 REPL with the same JARs on the classpath:
 
 If we load `dep.json` as follows, we'll see the following graph:
 
-    scala> import com.typesafe.tools.sculpt.cmd._
-    import com.typesafe.tools.sculpt.cmd._
+    scala> import com.lightbend.tools.sculpt.cmd._
+    import com.lightbend.tools.sculpt.cmd._
 
     scala> load("dep.json")
-    res0: com.typesafe.tools.sculpt.model.Graph = Graph 'dep.json': 15 nodes, 19 edges
+    res0: com.lightbend.tools.sculpt.model.Graph = Graph 'dep.json': 15 nodes, 19 edges
 
     scala> println(res0.fullString)
     Graph 'dep.json': 15 nodes, 19 edges
@@ -196,7 +196,7 @@ call `load` with `classMode = true` in order to aggregate the
 dependencies after loading:
 
     scala> load("dep.json", classMode = true)
-    res2: com.typesafe.tools.sculpt.model.Graph = Graph 'dep.json': 7 nodes, 10 edges
+    res2: com.lightbend.tools.sculpt.model.Graph = Graph 'dep.json': 7 nodes, 10 edges
 
 #### Cycles and layers reports
 
@@ -211,7 +211,7 @@ from default mode to class mode at load time:
 
 Continuing the running example, here's a cycles report:
 
-    scala> import com.typesafe.tools.sculpt.model.Cycles
+    scala> import com.lightbend.tools.sculpt.model.Cycles
 
     scala> println(Cycles.cyclesString(res2.nodes))
     [2] o:Dep1 o:Dep2
@@ -294,7 +294,7 @@ Saving the graph back to a JSON model and loading it again:
     scala> save(res0, "dep2.json")
 
     scala> load("dep2.json")
-    res5: com.typesafe.tools.sculpt.model.Graph = Graph 'dep2.json': 8 nodes, 8 edges
+    res5: com.lightbend.tools.sculpt.model.Graph = Graph 'dep2.json': 8 nodes, 8 edges
 
     scala> println(res5.fullString)
     Graph 'dep2.json': 8 nodes, 8 edges

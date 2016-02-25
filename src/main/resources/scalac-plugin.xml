@@ -1,4 +1,4 @@
 <plugin>
   <name>sculpt</name>
-  <classname>com.typesafe.tools.sculpt.plugin.SculptPlugin</classname>
+  <classname>com.lightbend.tools.sculpt.plugin.SculptPlugin</classname>
 </plugin>

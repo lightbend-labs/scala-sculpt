@@ -1,11 +1,11 @@
-// Copyright (C) 2015-2016 Typesafe Inc. <http://typesafe.com>
+// Copyright (C) 2015-2016 Lightbend Inc. <http://lightbend.com>
 
-package com.typesafe.tools.sculpt
+package com.lightbend.tools.sculpt
 
 import spray.json._
 import scala.io.Codec
-import com.typesafe.tools.sculpt.model._
-import com.typesafe.tools.sculpt.model.ModelJsonProtocol._
+import com.lightbend.tools.sculpt.model._
+import com.lightbend.tools.sculpt.model.ModelJsonProtocol._
 
 /** REPL commands and features */
 package object cmd {
