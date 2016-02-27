@@ -15,18 +15,18 @@ incremental compile times.
 
 ## Building the plugin from source
 
-`sbt assembly` will create `target/scala-2.11/scala-sculpt_2.11-0.1.3.jar`.
+`sbt assembly` will create `target/scala-2.11/scala-sculpt_2.11-0.1.4.jar`.
 (The JAR is a fat JAR that bundles its dependency on spray-json.)
 
 ## Using the plugin
 
 You can use the compiled plugin with the Scala 2.11 compiler as follows.
 
-Supposing you have `scala-sculpt_2.11-0.1.3.jar` in your current working directory,
+Supposing you have `scala-sculpt_2.11-0.1.4.jar` in your current working directory,
 
 Then you can do e.g.:
 
-    scalac -Xplugin:scala-sculpt_2.11-0.1.3.jar \
+    scalac -Xplugin:scala-sculpt_2.11-0.1.4.jar \
       -Xplugin-require:sculpt \
       -P:sculpt:out=dep.json \
       Dep.scala
@@ -122,7 +122,7 @@ If you prefer an aggregated higher-level summary, you can run Sculpt
 in "class mode" by adding `-P:sculpt:mode=class`. So e.g. a complete
 invocation would look like:
 
-    scalac -Xplugin:scala-sculpt_2.11-0.1.3.jar \
+    scalac -Xplugin:scala-sculpt_2.11-0.1.4.jar \
       -Xplugin-require:sculpt \
       -P:sculpt:out=classes.json \
       -P:sculpt:mode=class \
@@ -168,15 +168,15 @@ manipulation, e.g. in the REPL.
 
 Now in a Scala 2.11 REPL with the same JARs on the classpath:
 
-    scala -classpath scala-sculpt_2.11-0.1.3.jar
+    scala -classpath scala-sculpt_2.11-0.1.4.jar
 
 If we load `dep.json` as follows, we'll see the following graph:
 
-    scala> import com.typesafe.tools.sculpt.cmd._
-    import com.typesafe.tools.sculpt.cmd._
+    scala> import com.lightbend.tools.sculpt.cmd._
+    import com.lightbend.tools.sculpt.cmd._
 
     scala> load("dep.json")
-    res0: com.typesafe.tools.sculpt.model.Graph = Graph 'dep.json': 15 nodes, 19 edges
+    res0: com.lightbend.tools.sculpt.model.Graph = Graph 'dep.json': 15 nodes, 19 edges
 
     scala> println(res0.fullString)
     Graph 'dep.json': 15 nodes, 19 edges
@@ -196,7 +196,7 @@ call `load` with `classMode = true` in order to aggregate the
 dependencies after loading:
 
     scala> load("dep.json", classMode = true)
-    res2: com.typesafe.tools.sculpt.model.Graph = Graph 'dep.json': 7 nodes, 10 edges
+    res2: com.lightbend.tools.sculpt.model.Graph = Graph 'dep.json': 7 nodes, 10 edges
 
 #### Cycles and layers reports
 
@@ -211,7 +211,7 @@ from default mode to class mode at load time:
 
 Continuing the running example, here's a cycles report:
 
-    scala> import com.typesafe.tools.sculpt.model.Cycles
+    scala> import com.lightbend.tools.sculpt.model.Cycles
 
     scala> println(Cycles.cyclesString(res2.nodes))
     [2] o:Dep1 o:Dep2
@@ -294,7 +294,7 @@ Saving the graph back to a JSON model and loading it again:
     scala> save(res0, "dep2.json")
 
     scala> load("dep2.json")
-    res5: com.typesafe.tools.sculpt.model.Graph = Graph 'dep2.json': 8 nodes, 8 edges
+    res5: com.lightbend.tools.sculpt.model.Graph = Graph 'dep2.json': 8 nodes, 8 edges
 
     scala> println(res5.fullString)
     Graph 'dep2.json': 8 nodes, 8 edges

@@ -1,6 +1,6 @@
-// Copyright (C) 2016 Typesafe Inc. <http://typesafe.com>
+// Copyright (C) 2016 Lightbend Inc. <http://lightbend.com>
 
-package com.typesafe.tools.sculpt.model
+package com.lightbend.tools.sculpt.model
 
 object Cycles {
 

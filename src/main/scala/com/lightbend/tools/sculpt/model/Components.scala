@@ -1,6 +1,6 @@
-// Copyright (C) 2016 Typesafe Inc. <http://typesafe.com>
+// Copyright (C) 2016 Lightbend Inc. <http://lightbend.com>
 
-package com.typesafe.tools.sculpt.model
+package com.lightbend.tools.sculpt.model
 
 // implements Tarjan's strongly connected components algorithm; see
 // https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm

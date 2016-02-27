@@ -1,8 +1,8 @@
-// Copyright (C) 2015-2016 Typesafe Inc. <http://typesafe.com>
+// Copyright (C) 2015-2016 Lightbend Inc. <http://lightbend.com>
 
-organization  := "com.typesafe"
+organization  := "com.lightbend"
 name          := "scala-sculpt"
-version       := "0.1.3"
+version       := "0.1.4"
 licenses      := Seq("Apache License v2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 homepage      := Some(url("http://github.com/typesafehub/scala-sculpt"))
 

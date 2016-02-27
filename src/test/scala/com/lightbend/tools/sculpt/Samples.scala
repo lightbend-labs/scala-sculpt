@@ -1,11 +1,11 @@
-// Copyright (C) 2015-2016 Typesafe Inc. <http://typesafe.com>
+// Copyright (C) 2015-2016 Lightbend Inc. <http://lightbend.com>
 
-package com.typesafe.tools.sculpt
+package com.lightbend.tools.sculpt
 
 import model._
 
 // to add a new sample (or update an existing one):
-//   test:runMain com.typesafe.tools.sculpt.Samples name <source code>
+//   test:runMain com.lightbend.tools.sculpt.Samples name <source code>
 // and paste the results below
 
 case class Sample(
@@ -56,7 +56,7 @@ object Samples {
 
   val samples = collection.mutable.Buffer.empty[Sample]
 
-  // test:runMain com.typesafe.tools.sculpt.Samples "lone object" "object O"
+  // test:runMain com.lightbend.tools.sculpt.Samples "lone object" "object O"
   Sample(
     name = "lone object",
     source =
@@ -97,7 +97,7 @@ object Samples {
          |[0] tp:scala.AnyRef
          |""".stripMargin)
 
-  // test:runMain com.typesafe.tools.sculpt.Samples "two subclasses" "trait T; class C1 extends T; class C2 extends T"
+  // test:runMain com.lightbend.tools.sculpt.Samples "two subclasses" "trait T; class C1 extends T; class C2 extends T"
   Sample(
     name = "two subclasses",
     source =
@@ -168,7 +168,7 @@ object Samples {
          |[0] tp:scala.AnyRef
          |""".stripMargin)
 
-  // test:runMain com.typesafe.tools.sculpt.Samples "circular dependency" "trait T1 { def x: T2 }; trait T2 { def x: T1 }"
+  // test:runMain com.lightbend.tools.sculpt.Samples "circular dependency" "trait T1 { def x: T2 }; trait T2 { def x: T1 }"
   Sample(
     name = "circular dependency",
     source =
@@ -215,7 +215,7 @@ object Samples {
          |[0] tp:scala.AnyRef
          |""".stripMargin)
 
-  // test:runMain com.typesafe.tools.sculpt.Samples "3-cycle" "trait T1 { def t: T2 }; trait T2 { def t: T3 }; trait T3 { def t: T1 }"
+  // test:runMain com.lightbend.tools.sculpt.Samples "3-cycle" "trait T1 { def t: T2 }; trait T2 { def t: T3 }; trait T3 { def t: T1 }"
   Sample(
     name = "3-cycle",
     source =
@@ -272,7 +272,7 @@ object Samples {
          |[0] tp:scala.AnyRef
          |""".stripMargin)
 
-  // test:runMain com.typesafe.tools.sculpt.Samples "package" "package a.b { class C1; class C2 }"
+  // test:runMain com.lightbend.tools.sculpt.Samples "package" "package a.b { class C1; class C2 }"
   Sample(
     name = "package",
     source =
@@ -333,7 +333,7 @@ object Samples {
          |[0] tp:scala.AnyRef
          |""".stripMargin)
 
-  // test:runMain com.typesafe.tools.sculpt.Samples "nested class" "trait T; class C { class D extends T }"
+  // test:runMain com.lightbend.tools.sculpt.Samples "nested class" "trait T; class C { class D extends T }"
   Sample(
     name = "nested class",
     source =
@@ -398,7 +398,7 @@ object Samples {
          |[0] tp:scala.AnyRef
          |""".stripMargin)
 
-  // test:runMain com.typesafe.tools.sculpt.Samples "uses module" "object O { None }"
+  // test:runMain com.lightbend.tools.sculpt.Samples "uses module" "object O { None }"
   Sample(
     name = "uses module",
     source =
@@ -449,7 +449,7 @@ object Samples {
          |[0] tp:scala.AnyRef
          |""".stripMargin)
 
-  // test:runMain com.typesafe.tools.sculpt.Samples "pattern match" "object O { 0 match { case _ => () } }"
+  // test:runMain com.lightbend.tools.sculpt.Samples "pattern match" "object O { 0 match { case _ => () } }"
   // re: the strange dependency on `["t:x"]`,
   // see https://github.com/typesafehub/scala-sculpt/issues/28
   Sample(
@@ -508,7 +508,7 @@ object Samples {
          |""".stripMargin)
 
   // this is the sample in the readme
-  // test:runMain com.typesafe.tools.sculpt.Samples "readme" "object Dep1 { val x = 42; val y = Dep2.z }; object Dep2 { val z = Dep1.x }"
+  // test:runMain com.lightbend.tools.sculpt.Samples "readme" "object Dep1 { val x = 42; val y = Dep2.z }; object Dep2 { val z = Dep1.x }"
   Sample(
     name = "readme",
     source =
