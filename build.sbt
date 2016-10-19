@@ -3,7 +3,7 @@
 organization  := "com.lightbend"
 name          := "scala-sculpt"
 version       := "0.1.4"
-licenses      := Seq("Apache License v2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
+licenses      := Seq("BSD 3-Clause" -> url("https://opensource.org/licenses/BSD-3-Clause"))
 homepage      := Some(url("http://github.com/typesafehub/scala-sculpt"))
 
 scalaVersion  := "2.11.8"
