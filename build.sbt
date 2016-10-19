@@ -6,12 +6,12 @@ version       := "0.1.4"
 licenses      := Seq("Apache License v2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 homepage      := Some(url("http://github.com/typesafehub/scala-sculpt"))
 
-scalaVersion  := "2.11.7"
+scalaVersion  := "2.11.8"
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
   "io.spray" %% "spray-json" % "1.3.2",
-  "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 )
 
 // so we can run the Scala compiler during integration testing without
