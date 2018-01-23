@@ -4,7 +4,8 @@ version       := "0.1.4-SNAPSHOT"
 licenses      := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 homepage      := Some(url("http://github.com/lightbend/scala-sculpt"))
 
-scalaVersion  := "2.11.12"
+scalaVersion  := crossScalaVersions.value.head
+crossScalaVersions := Seq("2.11.12", "2.12.4")
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
@@ -29,7 +30,7 @@ scalacOptions ++= Seq(
 
 // generate same JAR name as `package` would:
 // - don't append "-assembly"; see issue #18
-// - and do include the "_2.11", don't know why assembly removes that by default
+// - and do include the "_2.1x", don't know why assembly removes that by default
 assemblyJarName in assembly :=
   s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar"
 

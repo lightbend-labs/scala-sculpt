@@ -9,7 +9,11 @@ import scala.reflect.internal.util.BatchSourceFile
 object Scaffold {
 
   val classes: String = {
-    val relative = "./target/scala-2.11/classes"
+    // this will be e.g. "2.11" or "2.12"
+    val majorScalaVersion =
+      scala.util.Properties.versionNumberString
+        .split('.').take(2).mkString(".")
+    val relative = s"./target/scala-$majorScalaVersion/classes"
     val file = new java.io.File(relative)
     assert(file.exists)
     file.getAbsolutePath
