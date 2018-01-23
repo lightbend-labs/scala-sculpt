@@ -39,7 +39,7 @@ object ClassMode {
           case EntityKind.Module =>
             Some(Path(packages :+ next.copy(kind = EntityKind.ModuleClass)))
           // ignore strange dependencies on bare terms;
-          // see https://github.com/typesafehub/scala-sculpt/issues/28
+          // see https://github.com/lightbend/scala-sculpt/issues/28
           case EntityKind.Term if packages.isEmpty =>
             None
           case _ =>

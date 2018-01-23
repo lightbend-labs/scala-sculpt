@@ -451,7 +451,7 @@ object Samples {
 
   // test:runMain com.lightbend.tools.sculpt.Samples "pattern match" "object O { 0 match { case _ => () } }"
   // re: the strange dependency on `["t:x"]`,
-  // see https://github.com/typesafehub/scala-sculpt/issues/28
+  // see https://github.com/lightbend/scala-sculpt/issues/28
   Sample(
     name = "pattern match",
     source =

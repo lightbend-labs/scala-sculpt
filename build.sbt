@@ -4,7 +4,7 @@ organization  := "com.lightbend"
 name          := "scala-sculpt"
 version       := "0.1.4"
 licenses      := Seq("BSD 3-Clause" -> url("https://opensource.org/licenses/BSD-3-Clause"))
-homepage      := Some(url("http://github.com/typesafehub/scala-sculpt"))
+homepage      := Some(url("http://github.com/lightbend/scala-sculpt"))
 
 scalaVersion  := "2.11.8"
 
@@ -43,5 +43,5 @@ unmanagedResources in Compile ++=
     .map(baseDirectory.value / _)
 
 pomExtra := (<scm>
-  <url>https://github.com/typesafehub/scala-sculpt.git</url>
-  <connection>scm:https://github.com/typesafehub/scala-sculpt.git</connection></scm>)
+  <url>https://github.com/lightbend/scala-sculpt.git</url>
+  <connection>scm:https://github.com/lightbend/scala-sculpt.git</connection></scm>)
