@@ -336,3 +336,7 @@ Possible future directions include:
 * automatic identification of problematic dependencies
 * “what-if” analyses exploring the effect of proposed code changes
 * offer a means of declaring and enforcing desired architectural constraints (allowed and forbidden dependencies)
+
+## Similar/related work
+
+* https://github.com/matanster/extractor
