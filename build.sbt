@@ -43,3 +43,9 @@ unmanagedResources in Compile ++=
 pomExtra := (<scm>
   <url>https://github.com/lightbend/scala-sculpt.git</url>
   <connection>scm:https://github.com/lightbend/scala-sculpt.git</connection></scm>)
+
+// configure sbt-header -- to update, run
+// `headerCreate` and `test:headerCreate`
+headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment)
+headerLicense := Some(HeaderLicense.Custom(
+  "Copyright (C) 2015-2018 Lightbend Inc. <http://lightbend.com>"))
