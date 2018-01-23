@@ -1,9 +1,7 @@
-// Copyright (C) 2015-2016 Lightbend Inc. <http://lightbend.com>
-
 organization  := "com.lightbend"
 name          := "scala-sculpt"
-version       := "0.1.4"
-licenses      := Seq("BSD 3-Clause" -> url("https://opensource.org/licenses/BSD-3-Clause"))
+version       := "0.1.4-SNAPSHOT"
+licenses      := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 homepage      := Some(url("http://github.com/lightbend/scala-sculpt"))
 
 scalaVersion  := "2.11.8"
