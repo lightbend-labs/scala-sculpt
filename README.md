@@ -340,3 +340,5 @@ Possible future directions include:
 ## Similar/related work
 
 * https://github.com/matanster/extractor
+* https://github.com/lihaoyi/acyclic
+* https://www.jetbrains.com/help/idea/dsm-analysis.html
