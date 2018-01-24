@@ -89,7 +89,7 @@ abstract class ExtractDependencies extends PluginComponent {
     /*
      * Some macros appear to contain themselves as original tree.
      * We must check that we don't inspect the same tree over and over.
-     * See https://issues.scala-lang.org/browse/SI-8486
+     * See https://github.com/scala/bug/issues/8486
      *     https://github.com/sbt/sbt/issues/1237
      *     https://github.com/sbt/sbt/issues/1544
      */
