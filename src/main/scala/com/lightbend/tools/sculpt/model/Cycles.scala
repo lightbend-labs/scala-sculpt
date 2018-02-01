@@ -57,4 +57,66 @@ object Cycles {
           .mkString}
       .mkString
 
+  def path(from: Node, to: Node): Option[Seq[Node]] = {
+    type Result = (Set[Node], Option[Seq[Node]])
+    def findPath(current: Node, currentPath: List[Node], visitedNodes: Set[Node]): Result =
+      if (current == to) Set.empty -> Some((current :: currentPath).reverse)
+      else {
+        val newVisited = visitedNodes + current
+        val targets = current.edgesOut.map(_.to)
+        val newPath = current :: currentPath
+        targets.foldLeft((newVisited, None): Result) { (res, next) =>
+          res match {
+            case res@(_, Some(_)) => res
+            case res@(newVisited, None) =>
+              if (!newVisited(next))
+                findPath(next, newPath, newVisited)
+              else
+                res
+          }
+        }
+      }
+
+    findPath(from, Nil, Set.empty)._2
+  }
+  def path(nodes: Nodes, from: String, to: String): Option[Seq[Node]] = {
+    def get(name: String): Node =
+      nodes.find(_.path.nameString.endsWith(name)).getOrElse(throw new NoSuchElementException(name))
+
+    path(get(from), get(to))
+  }
+
+  def pp(nodes: Nodes, from: String, to: String): Unit = {
+    println("Forward")
+    path(nodes, from ,to).foreach(_.foreach(n => println(n.path.simpleString)))
+    println("Backward")
+    path(nodes, to,from).foreach(_.foreach(n => println(n.path.simpleString)))
+  }
+
+  def dot(graph: Graph): String = {
+    def nodeFilter(node: Node): Boolean =
+      node.path.simpleString.contains(":akka.http")
+      /*!node.path.simpleString.contains(":scala") &&
+      !node.path.simpleString.contains(":java") &&
+      !node.path.simpleString.contains(":akka.stream") &&
+      !node.path.simpleString.contains(":akka.util") &&
+      !node.path.simpleString.contains(":akka.parboiled2") &&
+      !node.path.simpleString.contains(":akka.actor")*/
+
+    def edgeFilter(edge: Edge): Boolean =
+      nodeFilter(edge.from) && nodeFilter(edge.to)
+
+    def formatNode(node: Node): String = s""""${node.path.simpleString}""""
+    def formatEdge(edge: Edge): String = s""""${edge.from.path.simpleString}"->"${edge.to.path.simpleString}""""
+
+    s"""|digraph "dependency-graph" {
+       |    graph[rankdir="LR"]
+       |    edge [
+       |        arrowtail="none"
+       |    ]
+       |    ${graph.nodes.iterator.filter(nodeFilter).map(formatNode).mkString("\n    ")}
+       |    ${graph.edges.iterator.filter(edgeFilter).map(formatEdge).mkString("\n    ")}
+       |}
+       |""".stripMargin
+  }
 }
