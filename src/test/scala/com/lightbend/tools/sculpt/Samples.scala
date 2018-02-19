@@ -8,15 +8,15 @@ import model._
 //   test:runMain com.lightbend.tools.sculpt.Samples name <source code>
 // and paste the results below
 
-case class Sample(
-  name: String,
-  source: String,
-  json: String,
-  classJson: String,
-  graph: String,
-  tree: String,
-  cycles: String = "",
-  layers: String = ""
+class Sample(
+  val name: String,
+  val source: String,
+  val json: String,
+  val classJson: String,
+  val graph: String,
+  val tree: String,
+  val cycles: String = "",
+  val layers: String = ""
 ) {
   Samples.samples += this
 }
