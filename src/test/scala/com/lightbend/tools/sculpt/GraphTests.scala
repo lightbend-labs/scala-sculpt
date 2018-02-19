@@ -56,7 +56,7 @@ class GraphTests extends FunSuite {
          |  - o:Dep1.def:y -[Uses]-> o:Dep1.t:y
          |  - o:Dep1.def:y -[Uses]-> pkt:scala.cl:Int
          |  - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
-         |  - o:Dep1.t:y -[Uses]-> pkt:scala.cl:Int""".stripMargin
+         |  - o:Dep1.t:y -[Uses]-> pkt:scala.cl:Int""".stripMargin.replaceAll("\\r\\n", "\n")
     assertResult(expected) { graph.fullString }
   }
 

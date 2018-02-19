@@ -21,6 +21,29 @@ case class Sample(
   Samples.samples += this
 }
 
+object Sample {
+  def apply(
+             name: String,
+             source: String,
+             json: String,
+             classJson: String,
+             graph: String,
+             tree: String,
+             cycles: String = "",
+             layers: String = ""
+           ): Sample =
+    new Sample(
+      name,
+      source.replaceAll("\\r\\n", "\n"),
+      json.replaceAll("\\r\\n", "\n"),
+      classJson.replaceAll("\\r\\n", "\n"),
+      graph.replaceAll("\\r\\n", "\n"),
+      tree.replaceAll("\\r\\n", "\n"),
+      cycles.replaceAll("\\r\\n", "\n"),
+      layers.replaceAll("\\r\\n", "\n")
+    )
+}
+
 object Samples {
 
   def main(args: Array[String]): Unit = {
