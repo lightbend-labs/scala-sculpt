@@ -339,6 +339,8 @@ Possible future directions include:
 * “what-if” analyses exploring the effect of proposed code changes
 * offer a means of declaring and enforcing desired architectural constraints (allowed and forbidden dependencies)
 
+There are tickets on some of these at https://github.com/lightbend/scala-sculpt/issues .
+
 ## Similar/related work
 
 * https://github.com/matanster/extractor
