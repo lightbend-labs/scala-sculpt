@@ -138,7 +138,7 @@ abstract class ExtractDependencies extends PluginComponent {
           inheritanceSymbols.foreach(addInheritanceDependency)
 
           val allSymbols = inheritanceTypes.flatMap(symbolsInType)
-          (allSymbols -- inheritanceSymbols).foreach(addDependency)
+          (allSymbols diff inheritanceSymbols).foreach(addDependency)
           traverseTrees(body)
 
         case MacroExpansionOf(original) if inspectedOriginalTrees.add(original) => traverse(original)

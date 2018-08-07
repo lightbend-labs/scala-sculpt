@@ -10,9 +10,14 @@ object Scaffold {
 
   val classes: String = {
     // this will be e.g. "2.11" or "2.12"
-    val majorScalaVersion =
-      scala.util.Properties.versionNumberString
-        .split('.').take(2).mkString(".")
+    val majorScalaVersion = {
+      val v = scala.util.Properties.versionNumberString
+      if (v matches ".*-(M|RC)\\d+") {
+        v
+      } else {
+        v.split('.').take(2).mkString(".")
+      }
+    }
     val relative = s"./target/scala-$majorScalaVersion/classes"
     val file = new java.io.File(relative)
     assert(file.exists)
