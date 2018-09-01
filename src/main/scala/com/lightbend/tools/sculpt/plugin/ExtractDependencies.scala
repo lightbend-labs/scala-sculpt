@@ -71,7 +71,8 @@ abstract class ExtractDependencies extends PluginComponent {
         val path = Path(Seq(Entity(s.associatedFile.canonicalPath, EntityKind.File)))
         FullDependency(path, entitiesFor(s), DependencyKind.Declares, 1)
       }
-      // all the symbols in that exist:
+      // all the symbols that exist in syms
+      // we must compute this as we walk through the iterator
       val allSymbols = HashSet.empty[Symbol]
 
       val nonFileDeps = for {
@@ -83,8 +84,10 @@ abstract class ExtractDependencies extends PluginComponent {
 
       // now create all the file dependencies
       val fileDeps = allSymbols.iterator.map(fileDepFor)
-
-      (fileDeps ++ nonFileDeps).toSeq
+      // It is important to exhaust nonFileDeps first since doing so
+      // populates the mutable HashSet. We do this rather than materialize
+      // the MultiMapIterator or do a complex single traversal
+      (nonFileDeps ++ fileDeps).toSeq
     }
   }
 
