@@ -23,12 +23,17 @@ object EntityKind {
   case object ModuleClass extends AnyType("o")
   case object Class extends AnyType("cl")
   case object Type extends AnyType("tp")
+
+  case object File extends EntityKind {
+    def prefix = "file"
+  }
 }
 
 sealed trait DependencyKind
 object DependencyKind {
   case object Extends extends DependencyKind
   case object Uses extends DependencyKind
+  case object Declares extends DependencyKind
 }
 
 case class Entity(name: String, kind: EntityKind) {
