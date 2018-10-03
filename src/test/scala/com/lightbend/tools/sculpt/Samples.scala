@@ -57,7 +57,8 @@ object Samples {
     val tree = TreeTests.toTreeString(name, json) + "\n"
     val (cycles, layers) = CyclesTests.toCyclesAndLayersStrings(name, classJson)
     def triple(s: String): String =
-      s.lines.mkString("\"\"\"|", "\n         |", "\"\"\".stripMargin")
+      // augmentString = work around scala/bug#11125
+      augmentString(s).lines.mkString("\"\"\"|", "\n         |", "\"\"\".stripMargin")
     println(
       s"""@  Sample(
           @    name = "$name",
