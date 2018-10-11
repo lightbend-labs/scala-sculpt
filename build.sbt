@@ -10,7 +10,7 @@ crossScalaVersions := Seq("2.12.7", "2.11.12")
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
   "io.spray" %% "spray-json" % "1.3.2",
-  "org.scalatest" %% "scalatest" % "3.0.4" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 )
 
 // so we can run the Scala compiler during integration testing without
