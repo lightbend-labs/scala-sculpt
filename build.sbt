@@ -9,7 +9,7 @@ crossScalaVersions := Seq("2.12.7", "2.11.12")
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
-  "io.spray" %% "spray-json" % "1.3.4",
+  "io.spray" %% "spray-json" % "1.3.5",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 )
 
