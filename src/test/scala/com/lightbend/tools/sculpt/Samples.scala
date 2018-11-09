@@ -49,11 +49,13 @@ object Samples {
   def main(args: Array[String]): Unit = {
     import spray.json._
     import ModelJsonProtocol._
-    val (name, code) = (args.head, args.tail.mkString(" "))
-    val json = Scaffold.analyze(code)
+    val (name, source) = (args.head, args.tail.mkString(" "))
+    val json = Scaffold.analyze(source)
+    val classJson = {
+      val deps = json.parseJson.convertTo[Seq[FullDependency]]
+      FullDependenciesPrinter.print(ClassMode(deps).toJson)
+    }
     val graph = GraphTests.toGraph(name, json).fullString
-    val deps = json.parseJson.convertTo[Seq[FullDependency]]
-    val classJson = FullDependenciesPrinter.print(ClassMode(deps).toJson)
     val tree = TreeTests.toTreeString(name, json) + "\n"
     val (cycles, layers) = CyclesTests.toCyclesAndLayersStrings(name, classJson)
     def triple(s: String): String =
@@ -63,13 +65,13 @@ object Samples {
       s"""@  Sample(
           @    name = "$name",
           @    source =
-          @      ${triple(code)},
+          @      ${triple(source)},
           @    json =
           @      ${triple(json)},
-          @    graph =
-          @      ${triple(graph)},
           @    classJson =
           @      ${triple(classJson)},
+          @    graph =
+          @      ${triple(graph)},
           @    tree =
           @      ${triple(tree)},
           @    cycles =
@@ -253,6 +255,15 @@ object Samples {
          |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["tr:T3"]},
          |  {"sym": ["tr:T3", "def:t"], "uses": ["tr:T1"]}
          |]""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["tr:T1"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["tr:T1"], "uses": ["tr:T2"]},
+         |  {"sym": ["tr:T2"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["tr:T2"], "uses": ["tr:T3"]},
+         |  {"sym": ["tr:T3"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["tr:T3"], "uses": ["tr:T1"]}
+         |]""".stripMargin,
     graph =
       """|Graph '3-cycle': 7 nodes, 6 edges
          |Nodes:
@@ -270,15 +281,6 @@ object Samples {
          |  - tr:T2.def:t -[Uses]-> tr:T3
          |  - tr:T3 -[Extends]-> pkt:scala.tp:AnyRef
          |  - tr:T3.def:t -[Uses]-> tr:T1""".stripMargin,
-    classJson =
-      """|[
-         |  {"sym": ["tr:T1"], "uses": ["pkt:scala", "tp:AnyRef"]},
-         |  {"sym": ["tr:T1"], "uses": ["tr:T2"]},
-         |  {"sym": ["tr:T2"], "uses": ["pkt:scala", "tp:AnyRef"]},
-         |  {"sym": ["tr:T2"], "uses": ["tr:T3"]},
-         |  {"sym": ["tr:T3"], "uses": ["pkt:scala", "tp:AnyRef"]},
-         |  {"sym": ["tr:T3"], "uses": ["tr:T1"]}
-         |]""".stripMargin,
     tree =
       """|3-cycle:
          |└── T1
@@ -374,6 +376,13 @@ object Samples {
          |  {"sym": ["cl:C", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
          |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["tr:T"]}
          |]""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["cl:C"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["cl:C"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["cl:C"], "uses": ["tr:T"]},
+         |  {"sym": ["tr:T"], "uses": ["pkt:scala", "tp:AnyRef"]}
+         |]""".stripMargin,
     graph =
       """|Graph 'nested class': 7 nodes, 9 edges
          |Nodes:
@@ -394,13 +403,6 @@ object Samples {
          |  - cl:C.def:<init> -[Uses]-> cl:C
          |  - cl:C.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
          |  - tr:T -[Extends]-> pkt:scala.tp:AnyRef""".stripMargin,
-    classJson =
-      """|[
-         |  {"sym": ["cl:C"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
-         |  {"sym": ["cl:C"], "uses": ["pkt:scala", "tp:AnyRef"]},
-         |  {"sym": ["cl:C"], "uses": ["tr:T"]},
-         |  {"sym": ["tr:T"], "uses": ["pkt:scala", "tp:AnyRef"]}
-         |]""".stripMargin,
     tree =
       """|nested class:
          |└── C
@@ -435,6 +437,12 @@ object Samples {
          |  {"sym": ["o:O", "def:<init>"], "uses": ["o:O"]},
          |  {"sym": ["o:O", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]}
          |]""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["o:O"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["o:O"], "uses": ["pkt:scala", "o:None"]},
+         |  {"sym": ["o:O"], "uses": ["pkt:scala", "tp:AnyRef"]}
+         |]""".stripMargin,
     graph =
       """|Graph 'uses module': 6 nodes, 5 edges
          |Nodes:
@@ -450,12 +458,6 @@ object Samples {
          |  - o:O -[Uses]-> pkt:scala.ov:None
          |  - o:O.def:<init> -[Uses]-> o:O
          |  - o:O.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>""".stripMargin,
-    classJson =
-      """|[
-         |  {"sym": ["o:O"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
-         |  {"sym": ["o:O"], "uses": ["pkt:scala", "o:None"]},
-         |  {"sym": ["o:O"], "uses": ["pkt:scala", "tp:AnyRef"]}
-         |]""".stripMargin,
     tree =
       """|uses module:
          |└── O
@@ -489,6 +491,12 @@ object Samples {
          |  {"sym": ["o:O", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
          |  {"sym": ["o:O", "t:<local O>", "t:x1"], "uses": ["pkt:scala", "cl:Int"]}
          |]""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["o:O"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["o:O"], "uses": ["pkt:scala", "cl:Int"]},
+         |  {"sym": ["o:O"], "uses": ["pkt:scala", "tp:AnyRef"]}
+         |]""".stripMargin,
     graph =
       """|Graph 'pattern match': 8 nodes, 6 edges
          |Nodes:
@@ -507,12 +515,6 @@ object Samples {
          |  - o:O.def:<init> -[Uses]-> o:O
          |  - o:O.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
          |  - o:O.t:<local O>.t:x1 -[Uses]-> pkt:scala.cl:Int""".stripMargin,
-    classJson =
-      """|[
-         |  {"sym": ["o:O"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
-         |  {"sym": ["o:O"], "uses": ["pkt:scala", "cl:Int"]},
-         |  {"sym": ["o:O"], "uses": ["pkt:scala", "tp:AnyRef"]}
-         |]""".stripMargin,
     tree =
       """|pattern match:
          |└── O
@@ -559,6 +561,17 @@ object Samples {
          |  {"sym": ["o:Dep2", "t:z"], "uses": ["ov:Dep1"]},
          |  {"sym": ["o:Dep2", "t:z"], "uses": ["pkt:scala", "cl:Int"]}
          |]""".stripMargin,
+    classJson =
+      """|[
+         |  {"sym": ["o:Dep1"], "uses": ["o:Dep2"]},
+         |  {"sym": ["o:Dep1"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["o:Dep1"], "uses": ["pkt:scala", "cl:Int"]},
+         |  {"sym": ["o:Dep1"], "uses": ["pkt:scala", "tp:AnyRef"]},
+         |  {"sym": ["o:Dep2"], "uses": ["o:Dep1"]},
+         |  {"sym": ["o:Dep2"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+         |  {"sym": ["o:Dep2"], "uses": ["pkt:scala", "cl:Int"]},
+         |  {"sym": ["o:Dep2"], "uses": ["pkt:scala", "tp:AnyRef"]}
+         |]""".stripMargin,
     graph =
       """|Graph 'readme': 15 nodes, 19 edges
          |Nodes:
@@ -597,17 +610,6 @@ object Samples {
          |  - o:Dep2.t:z -[Uses]-> o:Dep1.def:x
          |  - o:Dep2.t:z -[Uses]-> ov:Dep1
          |  - o:Dep2.t:z -[Uses]-> pkt:scala.cl:Int""".stripMargin,
-    classJson =
-      """|[
-         |  {"sym": ["o:Dep1"], "uses": ["o:Dep2"]},
-         |  {"sym": ["o:Dep1"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
-         |  {"sym": ["o:Dep1"], "uses": ["pkt:scala", "cl:Int"]},
-         |  {"sym": ["o:Dep1"], "uses": ["pkt:scala", "tp:AnyRef"]},
-         |  {"sym": ["o:Dep2"], "uses": ["o:Dep1"]},
-         |  {"sym": ["o:Dep2"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
-         |  {"sym": ["o:Dep2"], "uses": ["pkt:scala", "cl:Int"]},
-         |  {"sym": ["o:Dep2"], "uses": ["pkt:scala", "tp:AnyRef"]}
-         |]""".stripMargin,
     tree =
       """|readme:
          |└── Dep1
