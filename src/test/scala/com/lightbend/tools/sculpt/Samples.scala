@@ -87,7 +87,7 @@ object Samples {
       """|object O""".stripMargin,
     json =
       """|[
-         |  {"sym": ["o:O"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["o:O"]},
          |  {"sym": ["o:O", "def:<init>"], "uses": ["o:O"]},
          |  {"sym": ["o:O", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]}
          |]""".stripMargin,
@@ -128,15 +128,15 @@ object Samples {
       """|trait T; class C1 extends T; class C2 extends T""".stripMargin,
     json =
       """|[
-         |  {"sym": ["cl:C1"], "extends": ["pkt:scala", "tp:AnyRef"]},
-         |  {"sym": ["cl:C1"], "extends": ["tr:T"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["cl:C1"]},
+         |  {"extends": ["tr:T"], "sym": ["cl:C1"]},
          |  {"sym": ["cl:C1", "def:<init>"], "uses": ["cl:C1"]},
          |  {"sym": ["cl:C1", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
-         |  {"sym": ["cl:C2"], "extends": ["pkt:scala", "tp:AnyRef"]},
-         |  {"sym": ["cl:C2"], "extends": ["tr:T"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["cl:C2"]},
+         |  {"extends": ["tr:T"], "sym": ["cl:C2"]},
          |  {"sym": ["cl:C2", "def:<init>"], "uses": ["cl:C2"]},
          |  {"sym": ["cl:C2", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
-         |  {"sym": ["tr:T"], "extends": ["pkt:scala", "tp:AnyRef"]}
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["tr:T"]}
          |]""".stripMargin,
     classJson =
       """|[
@@ -199,9 +199,9 @@ object Samples {
       """|trait T1 { def x: T2 }; trait T2 { def x: T1 }""".stripMargin,
     json =
       """|[
-         |  {"sym": ["tr:T1"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["tr:T1"]},
          |  {"sym": ["tr:T1", "def:x"], "uses": ["tr:T2"]},
-         |  {"sym": ["tr:T2"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["tr:T2"]},
          |  {"sym": ["tr:T2", "def:x"], "uses": ["tr:T1"]}
          |]""".stripMargin,
     classJson =
@@ -246,11 +246,11 @@ object Samples {
       """|trait T1 { def t: T2 }; trait T2 { def t: T3 }; trait T3 { def t: T1 }""".stripMargin,
     json =
       """|[
-         |  {"sym": ["tr:T1"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["tr:T1"]},
          |  {"sym": ["tr:T1", "def:t"], "uses": ["tr:T2"]},
-         |  {"sym": ["tr:T2"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["tr:T2"]},
          |  {"sym": ["tr:T2", "def:t"], "uses": ["tr:T3"]},
-         |  {"sym": ["tr:T3"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["tr:T3"]},
          |  {"sym": ["tr:T3", "def:t"], "uses": ["tr:T1"]}
          |]""".stripMargin,
     graph =
@@ -305,10 +305,10 @@ object Samples {
       """|[
          |  {"sym": [], "uses": ["pk:a"]},
          |  {"sym": [], "uses": ["pkt:a", "pk:b"]},
-         |  {"sym": ["pkt:a", "pkt:b", "cl:C1"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["pkt:a", "pkt:b", "cl:C1"]},
          |  {"sym": ["pkt:a", "pkt:b", "cl:C1", "def:<init>"], "uses": ["pkt:a", "pkt:b", "cl:C1"]},
          |  {"sym": ["pkt:a", "pkt:b", "cl:C1", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
-         |  {"sym": ["pkt:a", "pkt:b", "cl:C2"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["pkt:a", "pkt:b", "cl:C2"]},
          |  {"sym": ["pkt:a", "pkt:b", "cl:C2", "def:<init>"], "uses": ["pkt:a", "pkt:b", "cl:C2"]},
          |  {"sym": ["pkt:a", "pkt:b", "cl:C2", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]}
          |]""".stripMargin,
@@ -364,15 +364,15 @@ object Samples {
       """|trait T; class C { class D extends T }""".stripMargin,
     json =
       """|[
-         |  {"sym": ["cl:C"], "extends": ["pkt:scala", "tp:AnyRef"]},
-         |  {"sym": ["cl:C", "cl:D"], "extends": ["pkt:scala", "tp:AnyRef"]},
-         |  {"sym": ["cl:C", "cl:D"], "extends": ["tr:T"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["cl:C"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["cl:C", "cl:D"]},
+         |  {"extends": ["tr:T"], "sym": ["cl:C", "cl:D"]},
          |  {"sym": ["cl:C", "cl:D", "def:<init>"], "uses": ["cl:C"]},
          |  {"sym": ["cl:C", "cl:D", "def:<init>"], "uses": ["cl:C", "cl:D"]},
          |  {"sym": ["cl:C", "cl:D", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
          |  {"sym": ["cl:C", "def:<init>"], "uses": ["cl:C"]},
          |  {"sym": ["cl:C", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
-         |  {"sym": ["tr:T"], "extends": ["pkt:scala", "tp:AnyRef"]}
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["tr:T"]}
          |]""".stripMargin,
     graph =
       """|Graph 'nested class': 7 nodes, 9 edges
@@ -429,7 +429,7 @@ object Samples {
       """|object O { None }""".stripMargin,
     json =
       """|[
-         |  {"sym": ["o:O"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["o:O"]},
          |  {"sym": ["o:O"], "uses": ["pk:scala"]},
          |  {"sym": ["o:O"], "uses": ["pkt:scala", "ov:None"]},
          |  {"sym": ["o:O", "def:<init>"], "uses": ["o:O"]},
@@ -482,7 +482,7 @@ object Samples {
       """|object O { 0 match { case _ => () } }""".stripMargin,
     json =
       """|[
-         |  {"sym": ["o:O"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["o:O"]},
          |  {"sym": ["o:O"], "uses": ["o:O", "t:<local O>", "def:matchEnd3"]},
          |  {"sym": ["o:O"], "uses": ["t:x"]},
          |  {"sym": ["o:O", "def:<init>"], "uses": ["o:O"]},
@@ -539,7 +539,7 @@ object Samples {
       """|object Dep1 { val x = 42; val y = Dep2.z }; object Dep2 { val z = Dep1.x }""".stripMargin,
     json =
       """|[
-         |  {"sym": ["o:Dep1"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["o:Dep1"]},
          |  {"sym": ["o:Dep1", "def:<init>"], "uses": ["o:Dep1"]},
          |  {"sym": ["o:Dep1", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
          |  {"sym": ["o:Dep1", "def:x"], "uses": ["o:Dep1", "t:x"]},
@@ -550,7 +550,7 @@ object Samples {
          |  {"sym": ["o:Dep1", "t:y"], "uses": ["o:Dep2", "def:z"]},
          |  {"sym": ["o:Dep1", "t:y"], "uses": ["ov:Dep2"]},
          |  {"sym": ["o:Dep1", "t:y"], "uses": ["pkt:scala", "cl:Int"]},
-         |  {"sym": ["o:Dep2"], "extends": ["pkt:scala", "tp:AnyRef"]},
+         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["o:Dep2"]},
          |  {"sym": ["o:Dep2", "def:<init>"], "uses": ["o:Dep2"]},
          |  {"sym": ["o:Dep2", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
          |  {"sym": ["o:Dep2", "def:z"], "uses": ["o:Dep2", "t:z"]},
