@@ -15,12 +15,7 @@ language: scala
 scala:
   - 2.11.12
   - 2.12.8
-
-matrix:
-  include:
-  - scala: 2.13.0-M4
-    script:
-    - sbt "++${TRAVIS_SCALA_VERSION}!" test:compile # TODO
+  - 2.13.0-M5
 
 script:
   - sbt ++$TRAVIS_SCALA_VERSION test
