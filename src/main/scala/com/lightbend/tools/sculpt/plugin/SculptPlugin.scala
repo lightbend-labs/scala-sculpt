@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Lightbend Inc. <http://lightbend.com>
+// Copyright (C) 2015-2019 Lightbend Inc. <http://lightbend.com>
 
 package com.lightbend.tools.sculpt.plugin
 
@@ -13,9 +13,8 @@ class SculptPlugin(val global: Global) extends Plugin {
   val name        = "sculpt"
   val description = "Aid in modularizing big codebases"
 
-  object extractDependencies extends {
+  object extractDependencies extends ExtractDependencies {
     val global = SculptPlugin.this.global
-  } with ExtractDependencies {
     val runsAfter = List("refchecks")
     var outputPath: Option[File] = None
     var classMode = false

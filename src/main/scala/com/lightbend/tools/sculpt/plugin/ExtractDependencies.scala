@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Lightbend Inc. <http://lightbend.com>
+// Copyright (C) 2015-2019 Lightbend Inc. <http://lightbend.com>
 
 package com.lightbend.tools.sculpt.plugin
 
@@ -138,7 +138,7 @@ abstract class ExtractDependencies extends PluginComponent {
           inheritanceSymbols.foreach(addInheritanceDependency)
 
           val allSymbols = inheritanceTypes.flatMap(symbolsInType)
-          (allSymbols -- inheritanceSymbols).foreach(addDependency)
+          (allSymbols diff inheritanceSymbols).foreach(addDependency)
           traverseTrees(body)
 
         case MacroExpansionOf(original) if inspectedOriginalTrees.add(original) => traverse(original)
