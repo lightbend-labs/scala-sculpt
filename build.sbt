@@ -49,4 +49,4 @@ pomExtra := (<scm>
 // `headerCreate` and `test:headerCreate`
 headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment)
 headerLicense := Some(HeaderLicense.Custom(
-  "Copyright (C) 2015-2018 Lightbend Inc. <http://lightbend.com>"))
+  "Copyright (C) 2015-2019 Lightbend Inc. <http://lightbend.com>"))
