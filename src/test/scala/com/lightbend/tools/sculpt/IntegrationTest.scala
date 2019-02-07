@@ -12,7 +12,7 @@ object Scaffold {
     // this will be e.g. "2.11" or "2.12"
     val majorScalaVersion = {
       val v = scala.util.Properties.versionNumberString
-      if (v matches ".*-(M|RC)\\d+") {
+      if (v matches ".*-(pre-\\w+|M\\d+|RC\\d+)") {
         v
       } else {
         v.split('.').take(2).mkString(".")
