@@ -59,8 +59,7 @@ object Samples {
     val tree = TreeTests.toTreeString(name, json) + "\n"
     val (cycles, layers) = CyclesTests.toCyclesAndLayersStrings(name, classJson)
     def triple(s: String): String =
-      // augmentString = work around scala/bug#11125
-      augmentString(s).lines.mkString("\"\"\"|", "\n         |", "\"\"\".stripMargin")
+      s.linesIterator.mkString("\"\"\"|", "\n         |", "\"\"\".stripMargin")
     println(
       s"""@  Sample(
           @    name = "$name",
@@ -476,62 +475,49 @@ object Samples {
          |""".stripMargin)
 
   // test:runMain com.lightbend.tools.sculpt.Samples "pattern match" "object O { 0 match { case _ => () } }"
-  // re: the strange dependency on `["t:x"]`,
-  // see https://github.com/lightbend/scala-sculpt/issues/28
-  Sample(
-    name = "pattern match",
-    source =
-      """|object O { 0 match { case _ => () } }""".stripMargin,
-    json =
-      """|[
-         |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["o:O"]},
-         |  {"sym": ["o:O"], "uses": ["o:O", "t:<local O>", "def:matchEnd3"]},
-         |  {"sym": ["o:O"], "uses": ["t:x"]},
-         |  {"sym": ["o:O", "def:<init>"], "uses": ["o:O"]},
-         |  {"sym": ["o:O", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]},
-         |  {"sym": ["o:O", "t:<local O>", "t:x1"], "uses": ["pkt:scala", "cl:Int"]}
-         |]""".stripMargin,
-    classJson =
-      """|[
-         |  {"sym": ["o:O"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
-         |  {"sym": ["o:O"], "uses": ["pkt:scala", "cl:Int"]},
-         |  {"sym": ["o:O"], "uses": ["pkt:scala", "tp:AnyRef"]}
-         |]""".stripMargin,
-    graph =
-      """|Graph 'pattern match': 8 nodes, 6 edges
-         |Nodes:
-         |  - o:O
-         |  - pkt:scala.tp:AnyRef
-         |  - o:O.t:<local O>.def:matchEnd3
-         |  - t:x
-         |  - o:O.def:<init>
-         |  - pkt:java.pkt:lang.cl:Object.def:<init>
-         |  - o:O.t:<local O>.t:x1
-         |  - pkt:scala.cl:Int
-         |Edges:
-         |  - o:O -[Extends]-> pkt:scala.tp:AnyRef
-         |  - o:O -[Uses]-> o:O.t:<local O>.def:matchEnd3
-         |  - o:O -[Uses]-> t:x
-         |  - o:O.def:<init> -[Uses]-> o:O
-         |  - o:O.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>
-         |  - o:O.t:<local O>.t:x1 -[Uses]-> pkt:scala.cl:Int""".stripMargin,
-    tree =
-      """|pattern match:
-         |└── O
-         |    └── scala.AnyRef
-         |    └── O.<local O>.matchEnd3
-         |    └── x
-         |└── scala.AnyRef
-         |└── scala.Int
-         |""".stripMargin,
-    cycles =
-      """|""".stripMargin,
-    layers =
-      """|[1] o:O
-         |[0] cl:java.lang.Object
-         |[0] cl:scala.Int
-         |[0] tp:scala.AnyRef
-         |""".stripMargin)
+  // we only run this on 2.13, because the results are different (and worse) in 2.11 and 2.12, as per
+  // https://github.com/lightbend/scala-sculpt/issues/28
+  if (!scala.util.Properties.versionNumberString.startsWith("2.11") &&
+      !scala.util.Properties.versionNumberString.startsWith("2.12"))
+    Sample(
+      name = "pattern match",
+      source =
+        """|object O { 0 match { case _ => () } }""".stripMargin,
+      json =
+        """|[
+           |  {"extends": ["pkt:scala", "tp:AnyRef"], "sym": ["o:O"]},
+           |  {"sym": ["o:O", "def:<init>"], "uses": ["o:O"]},
+           |  {"sym": ["o:O", "def:<init>"], "uses": ["pkt:java", "pkt:lang", "cl:Object", "def:<init>"]}
+           |]""".stripMargin,
+      classJson =
+        """|[
+           |  {"sym": ["o:O"], "uses": ["pkt:java", "pkt:lang", "cl:Object"]},
+           |  {"sym": ["o:O"], "uses": ["pkt:scala", "tp:AnyRef"]}
+           |]""".stripMargin,
+      graph =
+        """|Graph 'pattern match': 4 nodes, 3 edges
+           |Nodes:
+           |  - o:O
+           |  - pkt:scala.tp:AnyRef
+           |  - o:O.def:<init>
+           |  - pkt:java.pkt:lang.cl:Object.def:<init>
+           |Edges:
+           |  - o:O -[Extends]-> pkt:scala.tp:AnyRef
+           |  - o:O.def:<init> -[Uses]-> o:O
+           |  - o:O.def:<init> -[Uses]-> pkt:java.pkt:lang.cl:Object.def:<init>""".stripMargin,
+      tree =
+        """|pattern match:
+           |└── O
+           |    └── scala.AnyRef
+           |└── scala.AnyRef
+           |""".stripMargin,
+      cycles =
+        """|""".stripMargin,
+      layers =
+        """|[1] o:O
+           |[0] cl:java.lang.Object
+           |[0] tp:scala.AnyRef
+           |""".stripMargin)
 
   // this is the sample in the readme
   // test:runMain com.lightbend.tools.sculpt.Samples "readme" "object Dep1 { val x = 42; val y = Dep2.z }; object Dep2 { val z = Dep1.x }"
