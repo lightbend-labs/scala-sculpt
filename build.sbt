@@ -5,7 +5,7 @@ licenses      := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2
 homepage      := Some(url("http://github.com/lightbend/scala-sculpt"))
 
 scalaVersion  := crossScalaVersions.value.head
-crossScalaVersions := Seq("2.12.8", "2.11.12", "2.13.0")
+crossScalaVersions := Seq("2.13.0", "2.12.8")
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
@@ -25,13 +25,8 @@ scalacOptions ++= Seq(
   "-unchecked",
   "-feature",
   "-Xlint",
+  "-Xfatal-warnings",
 )
-
-// warning-free on 2.12 and 2.13 is enough
-scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-  case Some((2, 11)) => Seq()
-  case _ => Seq("-Xfatal-warnings")
-})
 
 // generate same JAR name as `package` would:
 // - don't append "-assembly"; see issue #18

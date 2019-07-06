@@ -11,7 +11,7 @@ useful to someone.
 
 Sculpt is NOT supported under the Lightbend subscription.
 
-Supported Scala versions are currently 2.12.x and 2.11.x.
+Supported Scala versions are currently 2.13.x and 2.12.x.
 
 ## What is it for?
 
