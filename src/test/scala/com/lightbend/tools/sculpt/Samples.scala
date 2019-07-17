@@ -475,10 +475,9 @@ object Samples {
          |""".stripMargin)
 
   // test:runMain com.lightbend.tools.sculpt.Samples "pattern match" "object O { 0 match { case _ => () } }"
-  // we only run this on 2.13, because the results are different (and worse) in 2.11 and 2.12, as per
+  // we only run this on 2.13, because the results are different (and worse) on 2.12, as per
   // https://github.com/lightbend/scala-sculpt/issues/28
-  if (!scala.util.Properties.versionNumberString.startsWith("2.11") &&
-      !scala.util.Properties.versionNumberString.startsWith("2.12"))
+  if (!scala.util.Properties.versionNumberString.startsWith("2.12"))
     Sample(
       name = "pattern match",
       source =

@@ -1,21 +1,14 @@
-# opt-in to Travis new infrastructure
-sudo: false
-
-# cache stuff, hopefully shortening build times
+language: scala
+jdk:
+  - openjdk8
+  - openjdk11
+scala:
+  - 2.12.8
+  - 2.13.0
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION test
 cache:
   directories:
   - $HOME/.ivy2
   - $HOME/.sbt/boot
   - $HOME/.sbt/launchers
-
-jdk:
-  - oraclejdk8
-  - openjdk11
-language: scala
-scala:
-  - 2.11.12
-  - 2.12.8
-  - 2.13.0-RC1
-
-script:
-  - sbt ++$TRAVIS_SCALA_VERSION test
