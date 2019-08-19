@@ -5,13 +5,14 @@ licenses      := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2
 homepage      := Some(url("http://github.com/lightbend/scala-sculpt"))
 
 scalaVersion  := crossScalaVersions.value.head
-crossScalaVersions := Seq("2.13.0", "2.12.8")
+crossScalaVersions := Seq("2.13.0", "2.12.9")
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
   "io.spray" %% "spray-json" % "1.3.5",
-  "org.scalatest" %% "scalatest" % "3.0.8" % "test",
+  "com.eed3si9n.verify" %% "verify" % "0.1.0" % Test,
 )
+testFrameworks += new TestFramework("verify.runner.Framework")
 
 // so we can run the Scala compiler during integration testing without
 // weird problems

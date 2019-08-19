@@ -3,9 +3,8 @@
 package com.lightbend.tools.sculpt
 import model._
 
-import org.scalatest.FunSuite
+object GraphTests extends verify.BasicTestSuite {
 
-object GraphTests {
   // also used by Samples.main
   def toGraph(name: String, json: String): Graph = {
     import spray.json._
@@ -13,18 +12,14 @@ object GraphTests {
     val dependencies = json.parseJson.convertTo[Seq[FullDependency]]
     Graph.apply(name, dependencies)
   }
-}
-
-class GraphTests extends FunSuite {
 
   // test reading JSON and generating a human-readable dump of
   // the resulting Graph object
   for {
     sample <- Samples.samples
   } test(sample.name) {
-    assertResult(sample.graph) {
-      GraphTests.toGraph(sample.name, sample.json).fullString
-    }
+    assert(sample.graph ==
+      GraphTests.toGraph(sample.name, sample.json).fullString)
   }
 
   // test `removePaths` as demonstrated in the readme
@@ -35,7 +30,7 @@ class GraphTests extends FunSuite {
     }
     assert(graph.fullString.contains("pkt:java.pkt:lang"))
     assert(graph.fullString.contains("Dep2"))
-    assertResult((15, 19))((graph.nodes.size, graph.edges.size))
+    assert((15, 19) == ((graph.nodes.size, graph.edges.size)))
     graph.removePaths("Dep2", "java.lang")
     val expected =
       """|Graph 'readme': 8 nodes, 8 edges
@@ -57,7 +52,7 @@ class GraphTests extends FunSuite {
          |  - o:Dep1.def:y -[Uses]-> pkt:scala.cl:Int
          |  - o:Dep1.t:x -[Uses]-> pkt:scala.cl:Int
          |  - o:Dep1.t:y -[Uses]-> pkt:scala.cl:Int""".stripMargin.replaceAll("\\r\\n", "\n")
-    assertResult(expected) { graph.fullString }
+    assert(expected == graph.fullString)
   }
 
 }

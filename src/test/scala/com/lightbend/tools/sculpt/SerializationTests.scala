@@ -3,16 +3,14 @@
 package com.lightbend.tools.sculpt
 
 import model._
-import org.scalatest.FunSuite
 import spray.json._
 
-class SerializationTests extends FunSuite {
+object SerializationTests extends verify.BasicTestSuite {
 
   // JSON -> JSValue -> JSON
   def roundTripThroughJsonASTs(sample: Sample): Unit = {
-    assertResult(sample.json) {
-      FullDependenciesPrinter.print(sample.json.parseJson)
-    }
+    assert(sample.json ==
+      FullDependenciesPrinter.print(sample.json.parseJson))
   }
 
   // JSON -> JSValue -> Seq[FullDependency] -> JSValue -> JSON
@@ -20,9 +18,8 @@ class SerializationTests extends FunSuite {
     import ModelJsonProtocol._
     val dependencies =
       sample.json.parseJson.convertTo[Seq[FullDependency]]
-    assertResult(sample.json) {
-      FullDependenciesPrinter.print(dependencies.toJson)
-    }
+    assert(sample.json ==
+      FullDependenciesPrinter.print(dependencies.toJson))
   }
 
   for (sample <- Samples.samples) {
