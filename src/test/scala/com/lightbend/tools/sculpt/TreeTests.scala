@@ -3,9 +3,8 @@
 package com.lightbend.tools.sculpt
 import model._
 
-import org.scalatest.FunSuite
+object TreeTests extends verify.BasicTestSuite {
 
-object TreeTests {
   // also used by Samples.main
   def toTreeString(name: String, json: String): String = {
     import spray.json._
@@ -14,13 +13,11 @@ object TreeTests {
     val graph = Graph.apply(name, dependencies)
     TreePrinter(graph)
   }
-}
 
-class TreeTests extends FunSuite {
   for(sample <- Samples.samples)
     test(sample.name) {
-      assertResult(sample.tree) {
-        TreeTests.toTreeString(sample.name, sample.json)
-      }
+      assert(sample.tree ==
+        TreeTests.toTreeString(sample.name, sample.json))
     }
+
 }

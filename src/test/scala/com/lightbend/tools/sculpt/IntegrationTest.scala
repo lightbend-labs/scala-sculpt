@@ -50,16 +50,10 @@ object Scaffold {
 
 }
 
-import org.scalatest.FunSuite
-
-class IntegrationTest extends FunSuite {
+object IntegrationTest extends verify.BasicTestSuite {
   def check(s: Sample): Unit = {
-    assertResult(s.json) {
-      Scaffold.analyze(s.source)
-    }
-    assertResult(s.classJson) {
-      Scaffold.analyze(s.source, classMode = true)
-    }
+    assert(s.json == Scaffold.analyze(s.source))
+    assert(s.classJson == Scaffold.analyze(s.source, classMode = true))
   }
   for (sample <- Samples.samples)
     test(sample.name) {
