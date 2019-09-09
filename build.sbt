@@ -10,7 +10,7 @@ crossScalaVersions := Seq("2.13.0", "2.12.9")
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
   "io.spray" %% "spray-json" % "1.3.5",
-  "com.eed3si9n.verify" %% "verify" % "0.1.0" % Test,
+  "com.eed3si9n.verify" %% "verify" % "0.2.0" % Test,
 )
 testFrameworks += new TestFramework("verify.runner.Framework")
 
