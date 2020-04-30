@@ -1,21 +1,14 @@
+version: ~> 1.0 # needed for imports
+import: scala/scala-dev:travis/default.yml
+
 language: scala
 
-jdk:
-  - openjdk8
-  - openjdk11
+env:
+  - ADOPTOPENJDK=8
+  - ADOPTOPENJDK=11
 scala:
-  - 2.12.10
-  - 2.13.1
+  - 2.12.11
+  - 2.13.2
 
 script:
   - sbt ++$TRAVIS_SCALA_VERSION test
-
-cache:
-  directories:
-  - $HOME/.sbt/boot
-  - $HOME/.sbt/launchers
-  - $HOME/.ivy2
-  - $HOME/.cache/coursier
-before_cache:
-  - find $HOME/.sbt -name "*.lock" | xargs rm
-  - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
