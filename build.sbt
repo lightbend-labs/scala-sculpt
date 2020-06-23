@@ -10,15 +10,15 @@ crossScalaVersions := Seq("2.13.2", "2.12.11")
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
   "io.spray" %% "spray-json" % "1.3.5",
-  "com.eed3si9n.verify" %% "verify" % "0.2.0" % Test,
+  "org.scalameta" %% "munit" % "0.7.9" % Test,
 )
-testFrameworks += new TestFramework("verify.runner.Framework")
+testFrameworks += new TestFramework("munit.Framework")
 
 // so we can run the Scala compiler during integration testing without
 // weird problems
 fork in Test := true
 
-// so the output of `test:runMain ...Samples` doesn't get tagged with [info]
+// so the output of `Test/runMain ...Samples` doesn't get tagged with [info]
 outputStrategy in Test := Some(StdoutOutput)
 
 scalacOptions ++= Seq(

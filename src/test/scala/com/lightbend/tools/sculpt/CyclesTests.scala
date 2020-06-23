@@ -3,8 +3,7 @@
 package com.lightbend.tools.sculpt
 import model._
 
-object CyclesTests extends verify.BasicTestSuite {
-
+object CyclesTests {
   // also used by Samples.main
   def toCyclesAndLayersStrings(name: String, json: String): (String, String) = {
     val graph: Graph = {
@@ -17,12 +16,13 @@ object CyclesTests extends verify.BasicTestSuite {
     (Cycles.cyclesString(graph.nodes),
      Cycles.layersString(graph.nodes))
   }
+}
 
+class CyclesTests extends munit.FunSuite {
   for (sample <- Samples.samples)
     test(sample.name) {
       val (cycles, layers) = CyclesTests.toCyclesAndLayersStrings(sample.name, sample.json)
       assert(sample.cycles == cycles)
       assert(sample.layers == layers)
     }
-
 }

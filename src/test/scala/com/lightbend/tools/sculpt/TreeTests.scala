@@ -3,8 +3,7 @@
 package com.lightbend.tools.sculpt
 import model._
 
-object TreeTests extends verify.BasicTestSuite {
-
+object TreeTests {
   // also used by Samples.main
   def toTreeString(name: String, json: String): String = {
     import spray.json._
@@ -13,6 +12,9 @@ object TreeTests extends verify.BasicTestSuite {
     val graph = Graph.apply(name, dependencies)
     TreePrinter(graph)
   }
+}
+
+class TreeTests extends munit.FunSuite {
 
   for(sample <- Samples.samples)
     test(sample.name) {

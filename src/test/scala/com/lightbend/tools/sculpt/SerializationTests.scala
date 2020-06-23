@@ -5,7 +5,7 @@ package com.lightbend.tools.sculpt
 import model._
 import spray.json._
 
-object SerializationTests extends verify.BasicTestSuite {
+class SerializationTests extends munit.FunSuite {
 
   // JSON -> JSValue -> JSON
   def roundTripThroughJsonASTs(sample: Sample): Unit = {
