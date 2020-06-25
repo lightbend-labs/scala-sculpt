@@ -3,8 +3,7 @@
 package com.lightbend.tools.sculpt
 import model._
 
-object GraphTests extends verify.BasicTestSuite {
-
+object GraphTests {
   // also used by Samples.main
   def toGraph(name: String, json: String): Graph = {
     import spray.json._
@@ -12,6 +11,9 @@ object GraphTests extends verify.BasicTestSuite {
     val dependencies = json.parseJson.convertTo[Seq[FullDependency]]
     Graph.apply(name, dependencies)
   }
+}
+
+class GraphTests extends munit.FunSuite {
 
   // test reading JSON and generating a human-readable dump of
   // the resulting Graph object

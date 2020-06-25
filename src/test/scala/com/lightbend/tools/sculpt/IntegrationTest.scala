@@ -50,7 +50,7 @@ object Scaffold {
 
 }
 
-object IntegrationTest extends verify.BasicTestSuite {
+class IntegrationTest extends munit.FunSuite {
   def check(s: Sample): Unit = {
     assert(s.json == Scaffold.analyze(s.source))
     assert(s.classJson == Scaffold.analyze(s.source, classMode = true))
