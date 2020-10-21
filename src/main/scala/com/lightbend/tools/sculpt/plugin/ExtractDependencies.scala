@@ -38,7 +38,7 @@ abstract class ExtractDependencies extends PluginComponent {
 
     override def run(): Unit = {
       extractDependenciesTraverser = new ExtractDependenciesTraverser
-      super.run
+      super.run()
       val deps = extractDependenciesTraverser.dependencies
       val inheritDeps = extractDependenciesTraverser.inheritanceDependencies
       extractDependenciesTraverser = null

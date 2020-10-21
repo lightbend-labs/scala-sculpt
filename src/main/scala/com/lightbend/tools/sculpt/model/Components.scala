@@ -35,7 +35,7 @@ class Components[T <: AnyRef] {
       if (!indexer.contains(node))
         recurse(node)
 
-    components.result
+    components.result()
 
   }
 
