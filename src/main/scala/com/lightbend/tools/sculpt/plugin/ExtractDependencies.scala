@@ -2,16 +2,19 @@
 
 package com.lightbend.tools.sculpt.plugin
 
+import java.io.File
+
 import scala.collection.mutable
 import scala.collection.mutable.HashSet
 import scala.io.Codec
+import scala.reflect.internal.Flags.PACKAGE
 import scala.tools.nsc
-import nsc.plugins._
-import scala.reflect.internal.Flags.{PACKAGE}
+
+import com.lightbend.tools.sculpt.model.ModelJsonProtocol._
 import com.lightbend.tools.sculpt.model._
 import spray.json._
-import com.lightbend.tools.sculpt.model.ModelJsonProtocol._
-import java.io.File
+
+import nsc.plugins._
 
 // adapted from the incremental compiler
 abstract class ExtractDependencies extends PluginComponent {

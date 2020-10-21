@@ -2,10 +2,11 @@
 
 package com.lightbend.tools.sculpt
 
-import spray.json._
 import scala.io.Codec
-import com.lightbend.tools.sculpt.model._
+
 import com.lightbend.tools.sculpt.model.ModelJsonProtocol._
+import com.lightbend.tools.sculpt.model._
+import spray.json._
 
 /** REPL commands and features */
 package object cmd {

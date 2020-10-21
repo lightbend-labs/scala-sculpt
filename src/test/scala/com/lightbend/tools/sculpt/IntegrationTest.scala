@@ -2,9 +2,9 @@
 
 package com.lightbend.tools.sculpt
 
-import scala.tools.nsc.{ Settings, Global }
-import scala.tools.nsc.io.VirtualDirectory
 import scala.reflect.internal.util.BatchSourceFile
+import scala.tools.nsc.io.VirtualDirectory
+import scala.tools.nsc.{Global, Settings}
 
 object Scaffold {
 

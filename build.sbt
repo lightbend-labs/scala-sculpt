@@ -51,3 +51,6 @@ pomExtra := (<scm>
 headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment)
 headerLicense := Some(HeaderLicense.Custom(
   "Copyright (C) 2015-2020 Lightbend Inc. <http://lightbend.com>"))
+
+// scalafix; run with `scalafixEnable` followed by `scalafix` and/or `Test/scalafix`
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.4.3"

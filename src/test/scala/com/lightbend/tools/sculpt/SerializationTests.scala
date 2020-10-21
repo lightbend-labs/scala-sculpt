@@ -2,8 +2,9 @@
 
 package com.lightbend.tools.sculpt
 
-import model._
 import spray.json._
+
+import model._
 
 class SerializationTests extends munit.FunSuite {
 

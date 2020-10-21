@@ -2,8 +2,9 @@
 
 package com.lightbend.tools.sculpt.model
 
-import spray.json._
 import java.lang.StringBuilder
+
+import spray.json._
 
 // we didn't like the appearance of the output with either of spray-json's formatters
 // (`compactPrint` and `prettyPrint`), so we rolled our own

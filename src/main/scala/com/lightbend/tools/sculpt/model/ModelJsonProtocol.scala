@@ -2,8 +2,8 @@
 
 package com.lightbend.tools.sculpt.model
 
-import spray.json._
 import com.lightbend.tools.sculpt.util.RegexInterpolator
+import spray.json._
 
 /** JSON serialization/deserialization for the Sculpt model types */
 object ModelJsonProtocol extends DefaultJsonProtocol {
