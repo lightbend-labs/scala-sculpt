@@ -5,9 +5,11 @@ package com.lightbend.tools.sculpt.plugin
 import java.io.File
 
 import scala.tools.nsc
+
+import com.lightbend.tools.sculpt.util.RegexInterpolator
+
 import nsc.Global
 import nsc.plugins.{ Plugin, PluginComponent }
-import com.lightbend.tools.sculpt.util.RegexInterpolator
 
 class SculptPlugin(val global: Global) extends Plugin {
   val name        = "sculpt"
