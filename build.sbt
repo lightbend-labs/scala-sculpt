@@ -53,4 +53,4 @@ headerLicense := Some(HeaderLicense.Custom(
   "Copyright (C) 2015-2020 Lightbend Inc. <http://lightbend.com>"))
 
 // scalafix; run with `scalafixEnable` followed by `scalafixAll`
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.4.3"
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.4.4"
