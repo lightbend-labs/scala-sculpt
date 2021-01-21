@@ -5,7 +5,7 @@ licenses      := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2
 homepage      := Some(url("http://github.com/lightbend/scala-sculpt"))
 
 scalaVersion  := crossScalaVersions.value.head
-crossScalaVersions := Seq("2.13.3", "2.12.12")
+crossScalaVersions := Seq("2.13.4", "2.12.13")
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
@@ -50,7 +50,7 @@ pomExtra := (<scm>
 // `headerCreate` and `test:headerCreate`
 headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment)
 headerLicense := Some(HeaderLicense.Custom(
-  "Copyright (C) 2015-2020 Lightbend Inc. <http://lightbend.com>"))
+  "Copyright (C) 2015-2021 Lightbend Inc. <http://lightbend.com>"))
 
 // scalafix; run with `scalafixEnable` followed by `scalafixAll`
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.4.4"
