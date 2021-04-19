@@ -27,18 +27,18 @@ incremental compile times.
 
 ## Building the plugin from source
 
-`sbt assembly` will create `target/scala-2.12/scala-sculpt_2.12-0.1.4.jar`.
+`sbt assembly` will create `target/scala-2.13/scala-sculpt_2.13-0.1.4.jar`.
 (The JAR is a fat JAR that bundles its dependency on spray-json.)
 
 ## Using the plugin
 
 You can use the compiled plugin with the Scala compiler as follows.
 
-Supposing you have `scala-sculpt_2.12-0.1.4.jar` in your current working directory,
+Supposing you have `scala-sculpt_2.13-0.1.4.jar` in your current working directory,
 
 Then you can do e.g.:
 
-    scalac -Xplugin:scala-sculpt_2.12-0.1.4.jar \
+    scalac -Xplugin:scala-sculpt_2.13-0.1.4.jar \
       -Xplugin-require:sculpt \
       -P:sculpt:out=dep.json \
       Dep.scala
@@ -134,7 +134,7 @@ If you prefer an aggregated higher-level summary, you can run Sculpt
 in "class mode" by adding `-P:sculpt:mode=class`. So e.g. a complete
 invocation would look like:
 
-    scalac -Xplugin:scala-sculpt_2.12-0.1.4.jar \
+    scalac -Xplugin:scala-sculpt_2.13-0.1.4.jar \
       -Xplugin-require:sculpt \
       -P:sculpt:out=classes.json \
       -P:sculpt:mode=class \
@@ -180,7 +180,7 @@ manipulation, e.g. in the REPL.
 
 Now in a Scala REPL with the same JARs on the classpath:
 
-    scala -classpath scala-sculpt_2.12-0.1.4.jar
+    scala -classpath scala-sculpt_2.13-0.1.4.jar
 
 If we load `dep.json` as follows, we'll see the following graph:
 
