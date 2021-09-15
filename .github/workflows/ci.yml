@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         java: [8, 11]
-        scala: [2.13.6, 2.12.14]
+        scala: [2.13.6, 2.12.15]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
