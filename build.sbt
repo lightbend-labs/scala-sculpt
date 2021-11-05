@@ -36,7 +36,7 @@ assembly / assemblyJarName :=
   s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar"
 
 assembly / assemblyOption :=
-  (assembly / assemblyOption).value.copy(includeScala = false)
+  (assembly / assemblyOption).value.withIncludeScala(false)
 
 Compile / unmanagedResources ++=
   Seq("README.md", "LICENSE")
