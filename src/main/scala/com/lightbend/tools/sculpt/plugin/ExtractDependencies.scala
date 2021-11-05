@@ -2,17 +2,16 @@
 
 package com.lightbend.tools.sculpt.plugin
 
-import java.io.File
+import com.lightbend.tools.sculpt.model.ModelJsonProtocol._
+import com.lightbend.tools.sculpt.model._
+import spray.json._
 
+import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.HashSet
 import scala.io.Codec
 import scala.reflect.internal.Flags.PACKAGE
 import scala.tools.nsc
-
-import com.lightbend.tools.sculpt.model.ModelJsonProtocol._
-import com.lightbend.tools.sculpt.model._
-import spray.json._
 
 import nsc.plugins._
 

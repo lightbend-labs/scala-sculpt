@@ -36,7 +36,7 @@ assembly / assemblyJarName :=
   s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar"
 
 assembly / assemblyOption :=
-  (assembly / assemblyOption).value.copy(includeScala = false)
+  (assembly / assemblyOption).value.withIncludeScala(false)
 
 Compile / unmanagedResources ++=
   Seq("README.md", "LICENSE")
@@ -53,4 +53,4 @@ headerLicense := Some(HeaderLicense.Custom(
   "Copyright (C) 2015-2021 Lightbend Inc. <http://lightbend.com>"))
 
 // scalafix; run with `scalafixEnable` followed by `scalafixAll`
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
