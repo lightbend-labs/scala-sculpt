@@ -2,11 +2,10 @@
 
 package com.lightbend.tools.sculpt.plugin
 
-import java.io.File
-
-import scala.tools.nsc
-
 import com.lightbend.tools.sculpt.util.RegexInterpolator
+
+import java.io.File
+import scala.tools.nsc
 
 import nsc.Global
 import nsc.plugins.{ Plugin, PluginComponent }
