@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2021 Lightbend Inc. <http://lightbend.com>
+// Copyright (C) 2015-2022 Lightbend Inc. <http://lightbend.com>
 
 package com.lightbend.tools.sculpt.plugin
 
