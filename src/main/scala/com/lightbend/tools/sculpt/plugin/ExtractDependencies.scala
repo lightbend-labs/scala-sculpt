@@ -45,7 +45,9 @@ abstract class ExtractDependencies extends PluginComponent {
       val inheritDeps = extractDependenciesTraverser.inheritanceDependencies
       extractDependenciesTraverser = null
       val fullDependencies =
-        (createFullDependencies(deps, DependencyKind.Uses) ++ createFullDependencies(inheritDeps, DependencyKind.Extends))
+        (createFullDependencies(deps, DependencyKind.Uses) ++ createFullDependencies(
+          inheritDeps,
+          DependencyKind.Extends))
           .filterNot(d => d.from == d.to)
           .groupBy(identity).map { case (d, l) => d.copy(count = l.size) }.toSeq.sortBy(_.toString)
       val json =
@@ -61,13 +63,16 @@ abstract class ExtractDependencies extends PluginComponent {
     def writeOutput(s: String): Unit = {
       outputPath match {
         case Some(f) => new scala.reflect.io.File(f)(Codec.UTF8).writeAll(s)
-        case None => print(s)
+        case None    => print(s)
       }
     }
 
-    def createFullDependencies(syms: MultiMapIterator, kind: DependencyKind): Seq[FullDependency] = {
+    def createFullDependencies(
+        syms: MultiMapIterator,
+        kind: DependencyKind): Seq[FullDependency] = {
       def entitiesFor(s: Symbol) =
-        Path(s.ownerChain.reverse.dropWhile(s => s.isEffectiveRoot || s.isEmptyPackage).map(Entity.forSymbol _))
+        Path(s.ownerChain.reverse.dropWhile(s => s.isEffectiveRoot || s.isEmptyPackage).map(
+          Entity.forSymbol _))
       (for {
         (from, tos) <- syms
         fromEntities = entitiesFor(from)
@@ -78,14 +83,16 @@ abstract class ExtractDependencies extends PluginComponent {
 
   private class ExtractDependenciesTraverser extends Traverser {
     import collection.mutable.{HashMap, HashSet}
-    private def emptyMultiMap: mutable.Map[Symbol, HashSet[Symbol]] = HashMap.empty[Symbol, HashSet[Symbol]].withDefault( _ => HashSet.empty[Symbol])
+    private def emptyMultiMap: mutable.Map[Symbol, HashSet[Symbol]] =
+      HashMap.empty[Symbol, HashSet[Symbol]].withDefault(_ => HashSet.empty[Symbol])
 
     private val deps = emptyMultiMap
     protected def addDependency(dep: Symbol): Unit = if (dep ne NoSymbol) deps(currentOwner) +== dep
     def dependencies: MultiMapIterator = deps.iterator
 
     private val inheritanceDeps = emptyMultiMap
-    protected def addInheritanceDependency(dep: Symbol): Unit = if (dep ne NoSymbol) inheritanceDeps(currentOwner) +== dep
+    protected def addInheritanceDependency(dep: Symbol): Unit =
+      if (dep ne NoSymbol) inheritanceDeps(currentOwner) +== dep
     def inheritanceDependencies: MultiMapIterator = inheritanceDeps.iterator
 
     /*
@@ -105,11 +112,15 @@ abstract class ExtractDependencies extends PluginComponent {
     }
 
     // skip packages
-    private def symbolsInType(tp: Type) = tp.collect{ case tp if tp != null && !(tp.typeSymbolDirect hasFlag PACKAGE) => tp.typeSymbolDirect }.toSet
-    private def flattenTypeToSymbols(tp: Type): List[Symbol] = if (tp eq null) Nil else tp match {
-      case ct: CompoundType => ct.typeSymbolDirect :: ct.parents.flatMap(flattenTypeToSymbols)
-      case _ => List(tp.typeSymbolDirect)
-    }
+    private def symbolsInType(tp: Type) = tp.collect {
+      case tp if tp != null && !(tp.typeSymbolDirect hasFlag PACKAGE) => tp.typeSymbolDirect
+    }.toSet
+    private def flattenTypeToSymbols(tp: Type): List[Symbol] =
+      if (tp eq null) Nil
+      else tp match {
+        case ct: CompoundType => ct.typeSymbolDirect :: ct.parents.flatMap(flattenTypeToSymbols)
+        case _                => List(tp.typeSymbolDirect)
+      }
 
     override def traverse(tree: Tree): Unit =
       tree match {
@@ -125,9 +136,9 @@ abstract class ExtractDependencies extends PluginComponent {
          *
          *  SelectFromTypeTree
          */
-        case id: Ident => addDependency(id.symbol)
-        case sel@Select(qual, _) => traverse(qual) ; addDependency(sel.symbol)
-        case sel@SelectFromTypeTree(qual, _) => traverse(qual) ; addDependency(sel.symbol)
+        case id: Ident                         => addDependency(id.symbol)
+        case sel @ Select(qual, _)             => traverse(qual); addDependency(sel.symbol)
+        case sel @ SelectFromTypeTree(qual, _) => traverse(qual); addDependency(sel.symbol)
 
         // In some cases (eg. macro annotations), `typeTree.tpe` may be null.
         // See sbt/sbt#1593 and sbt/sbt#1655.
@@ -143,9 +154,10 @@ abstract class ExtractDependencies extends PluginComponent {
           (allSymbols diff inheritanceSymbols).foreach(addDependency)
           traverseTrees(body)
 
-        case MacroExpansionOf(original) if inspectedOriginalTrees.add(original) => traverse(original)
+        case MacroExpansionOf(original) if inspectedOriginalTrees.add(original) =>
+          traverse(original)
 
-          // imports are a separate issue (remove unused ones, rewrite ones that were moved)
+        // imports are a separate issue (remove unused ones, rewrite ones that were moved)
 //        case Import(expr, selectors) =>
 //          selectors.foreach {
 //            case ImportSelector(nme.WILDCARD, _, null, _) =>

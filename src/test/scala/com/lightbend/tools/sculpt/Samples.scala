@@ -9,29 +9,29 @@ import model._
 // and paste the results below
 
 class Sample(
-  val name: String,
-  val source: String,
-  val json: String,
-  val classJson: String,
-  val graph: String,
-  val tree: String,
-  val cycles: String = "",
-  val layers: String = ""
+    val name: String,
+    val source: String,
+    val json: String,
+    val classJson: String,
+    val graph: String,
+    val tree: String,
+    val cycles: String = "",
+    val layers: String = ""
 ) {
   Samples.samples += this
 }
 
 object Sample {
   def apply(
-             name: String,
-             source: String,
-             json: String,
-             classJson: String,
-             graph: String,
-             tree: String,
-             cycles: String = "",
-             layers: String = ""
-           ): Sample =
+      name: String,
+      source: String,
+      json: String,
+      classJson: String,
+      graph: String,
+      tree: String,
+      cycles: String = "",
+      layers: String = ""
+  ): Sample =
     new Sample(
       name,
       source.replaceAll("\\r\\n", "\n"),
