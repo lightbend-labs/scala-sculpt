@@ -13,8 +13,7 @@ object CyclesTests {
       val classJson = FullDependenciesPrinter.print(ClassMode(deps).toJson)
       GraphTests.toGraph(name, classJson)
     }
-    (Cycles.cyclesString(graph.nodes),
-     Cycles.layersString(graph.nodes))
+    (Cycles.cyclesString(graph.nodes), Cycles.layersString(graph.nodes))
   }
 }
 

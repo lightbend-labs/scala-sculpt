@@ -43,7 +43,7 @@ class Graph(val name: String) { graph =>
     val out = mutable.LinkedHashMap[(Node, DependencyKind), Edge]()
     var dead = false
     def ensureNotDead[T](v: => T): T =
-      if(dead) throw new IllegalStateException(s"Node '$this' has been removed from the graph")
+      if (dead) throw new IllegalStateException(s"Node '$this' has been removed from the graph")
       else v
 
     def edgesIn: Iterable[Edge] = ensureNotDead(in.values)
@@ -51,17 +51,19 @@ class Graph(val name: String) { graph =>
 
     def connectTo(to: Node, kind: DependencyKind, count: Int): Edge = {
       val _to = to.asInstanceOf[GraphNode]
-      ensureNotDead(out.getOrElseUpdate((_to, kind), {
-        val e = new GraphEdge(this, _to, kind, count)
-        out.put((to, kind), e)
-        _to.in.put((self, kind), e)
-        graph.edgesSet.add(e)
-        e
-      }))
+      ensureNotDead(out.getOrElseUpdate(
+        (_to, kind), {
+          val e = new GraphEdge(this, _to, kind, count)
+          out.put((to, kind), e)
+          _to.in.put((self, kind), e)
+          graph.edgesSet.add(e)
+          e
+        }))
     }
 
     def remove(): Boolean = {
-      if(dead) false else {
+      if (dead) false
+      else {
         edgesIn.foreach(_.remove())
         edgesOut.foreach(_.remove())
         graph.nodesMap.remove(path)
@@ -73,17 +75,20 @@ class Graph(val name: String) { graph =>
     override def toString = path.toString
   }
 
-  /** Remove all nodes (and their connecting edges) whose path matches one of the
-    * specified simple path names (i.e. kinds are ignored, names concatenated by '.',
-    * no quotations). Descendents of the specified paths are also removed. */
+  /** Remove all nodes (and their connecting edges) whose path matches one of the specified simple
+    * path names (i.e. kinds are ignored, names concatenated by '.', no quotations). Descendents of
+    * the specified paths are also removed.
+    */
   def removePaths(simplePaths: String*): Unit = {
     val s = simplePaths.toSet
     // first remove matching nodes
     nodes.foreach { n =>
       val name = n.path.nameString
-      if(s.exists { p =>
-        name == p || name.startsWith(p + ".")
-      }) n.remove()
+      if (
+        s.exists { p =>
+          name == p || name.startsWith(p + ".")
+        }
+      ) n.remove()
     }
     // after the first round of removals, we may now have "orphan" nodes
     // with no incoming or outgoing edges. we'll remove those too
@@ -93,17 +98,22 @@ class Graph(val name: String) { graph =>
     }
   }
 
-  private[this] class GraphEdge(_from: GraphNode, _to: GraphNode, _kind: DependencyKind, _count: Int) extends Edge {
+  private[this] class GraphEdge(
+      _from: GraphNode,
+      _to: GraphNode,
+      _kind: DependencyKind,
+      _count: Int) extends Edge {
     var dead = false
     def ensureNotDead[T](v: T): T =
-      if(dead) throw new IllegalStateException(s"Edge '$this' has been removed from the graph")
+      if (dead) throw new IllegalStateException(s"Edge '$this' has been removed from the graph")
       else v
     def from: Node = ensureNotDead(_from)
     def to: Node = ensureNotDead(_to)
     def kind = ensureNotDead(_kind)
     def count = ensureNotDead(_count)
     def remove(): Boolean =
-      if(dead) false else {
+      if (dead) false
+      else {
         _from.out.remove((_to, _kind))
         _to.in.remove((_from, kind))
         graph.edgesSet.remove(this)
@@ -118,20 +128,21 @@ class Graph(val name: String) { graph =>
   def fullString: String = {
     val b = new StringBuilder()
     b.append(toString + "\nNodes:\n")
-    for(n <- nodes) b.append(s"  - $n\n")
+    for (n <- nodes) b.append(s"  - $n\n")
     b.append("Edges:")
-    for(e <- edges) b.append(s"\n  - $e")
+    for (e <- edges) b.append(s"\n  - $e")
     b.result()
   }
 
   def toJsonModel: Seq[FullDependency] =
-    edgesSet.map(e => FullDependency(e.from.path, e.to.path, e.kind, e.count)).toSeq.sortBy(_.toString)
+    edgesSet.map(e => FullDependency(e.from.path, e.to.path, e.kind, e.count)).toSeq.sortBy(
+      _.toString)
 }
 
 object Graph {
   def apply(name: String, model: Seq[FullDependency]): Graph = {
     val g = new Graph(name)
-    for(d <- model)
+    for (d <- model)
       g.addNode(d.from).connectTo(g.addNode(d.to), d.kind, d.count)
     g
   }

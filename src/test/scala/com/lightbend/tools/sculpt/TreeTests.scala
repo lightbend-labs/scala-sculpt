@@ -16,7 +16,7 @@ object TreeTests {
 
 class TreeTests extends munit.FunSuite {
 
-  for(sample <- Samples.samples)
+  for (sample <- Samples.samples)
     test(sample.name) {
       assert(sample.tree ==
         TreeTests.toTreeString(sample.name, sample.json))

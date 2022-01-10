@@ -44,20 +44,22 @@ case class Path(elems: Seq[Entity]) {
 
 object Entity {
   def forSymbol(sym: Symbols#Symbol): Entity = {
-    val kind = if(sym.isType) {
-      if(sym.isTrait) EntityKind.Trait
-      else if(sym.hasPackageFlag) EntityKind.PackageType
-      else if(sym.isModuleClass) EntityKind.ModuleClass
-      else if(sym.isClass) EntityKind.Class
-      else EntityKind.Type
-    } else { // Term
-      if(sym.hasPackageFlag) EntityKind.Package
-      else if(sym.isTermMacro) EntityKind.Macro
-      else if(sym.isModule) EntityKind.Module
-      else if(sym.isMethod) EntityKind.Method
-      else if(sym.isVariable) EntityKind.Mutable
-      else EntityKind.Term
-    }
+    val kind =
+      if (sym.isType) {
+        if (sym.isTrait) EntityKind.Trait
+        else if (sym.hasPackageFlag) EntityKind.PackageType
+        else if (sym.isModuleClass) EntityKind.ModuleClass
+        else if (sym.isClass) EntityKind.Class
+        else EntityKind.Type
+      }
+      else { // Term
+        if (sym.hasPackageFlag) EntityKind.Package
+        else if (sym.isTermMacro) EntityKind.Macro
+        else if (sym.isModule) EntityKind.Module
+        else if (sym.isMethod) EntityKind.Method
+        else if (sym.isVariable) EntityKind.Mutable
+        else EntityKind.Term
+      }
     Entity(sym.nameString, kind)
   }
 }
@@ -65,6 +67,6 @@ object Entity {
 case class FullDependency(from: Path, to: Path, kind: DependencyKind, count: Int) {
   override def toString = {
     val s = s"$from ${kind.toString.toLowerCase} $to"
-    if(count == 1) s else s"$s [$count]"
+    if (count == 1) s else s"$s [$count]"
   }
 }

@@ -30,7 +30,7 @@ object FullDependenciesPrinter extends JsonPrinter {
     x match {
       case JsObject(x) => printCompactObject(x, sb)
       case JsArray(x)  => printCompactArray(x, sb)
-      case _ => printLeaf(x, sb)
+      case _           => printLeaf(x, sb)
     }
   }
 

@@ -21,7 +21,11 @@ object ClassMode {
         from <- promote(dep.from)
         to <- promote(dep.to)
         if from != to
-      } yield FullDependency(from = from, to = to, kind = DependencyKind.Uses, count = 1)
+      } yield FullDependency(
+        from = from,
+        to = to,
+        kind = DependencyKind.Uses,
+        count = 1)
     promoted.distinct.sortBy(_.toString)
   }
 
@@ -59,7 +63,9 @@ object ClassMode {
 
   private val isClassKind: EntityKind => Boolean =
     Set[EntityKind](
-      EntityKind.Trait, EntityKind.Class,
-      EntityKind.ModuleClass, EntityKind.Type)
+      EntityKind.Trait,
+      EntityKind.Class,
+      EntityKind.ModuleClass,
+      EntityKind.Type)
 
 }

@@ -14,7 +14,8 @@ object Scaffold {
       val v = scala.util.Properties.versionNumberString
       if (v matches ".*-(pre-\\w+|M\\d+|RC\\d+)") {
         v
-      } else {
+      }
+      else {
         v.split('.').take(2).mkString(".")
       }
     }
