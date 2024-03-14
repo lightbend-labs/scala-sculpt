@@ -113,7 +113,8 @@ abstract class ExtractDependencies extends PluginComponent {
 
     // skip packages
     private def symbolsInType(tp: Type) = tp.collect {
-      case tp if tp != null && !(tp.typeSymbolDirect hasFlag PACKAGE) => tp.typeSymbolDirect
+      case part if part != null && !part.typeSymbolDirect.hasFlag(PACKAGE) =>
+        part.typeSymbolDirect
     }.toSet
     private def flattenTypeToSymbols(tp: Type): List[Symbol] =
       if (tp eq null) Nil
