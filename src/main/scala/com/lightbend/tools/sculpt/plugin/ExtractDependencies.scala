@@ -137,8 +137,8 @@ abstract class ExtractDependencies extends PluginComponent {
          *
          *  SelectFromTypeTree
          */
-        case id: Ident             => addDependency(id.symbol)
-        case sel @ Select(qual, _) => traverse(qual); addDependency(sel.symbol)
+        case id: Ident                         => addDependency(id.symbol)
+        case sel @ Select(qual, _)             => traverse(qual); addDependency(sel.symbol)
         case sel @ SelectFromTypeTree(qual, _) => traverse(qual); addDependency(sel.symbol)
 
         // In some cases (eg. macro annotations), `typeTree.tpe` may be null.
