@@ -2,7 +2,6 @@
 
 package com.lightbend.tools.sculpt.model
 
-import com.lightbend.tools.sculpt.util.RegexInterpolator
 import spray.json._
 
 /** JSON serialization/deserialization for the Sculpt model types */
@@ -10,19 +9,31 @@ object ModelJsonProtocol extends DefaultJsonProtocol {
 
   implicit object entityFormat extends JsonFormat[Entity] {
     def write(e: Entity) = new JsString(e.kind.prefix + ":" + e.name)
-    def read(value: JsValue) = value.convertTo[String] match {
-      case r"ov:(.*)$n"  => Entity(n, EntityKind.Module)
-      case r"def:(.*)$n" => Entity(n, EntityKind.Method)
-      case r"var:(.*)$n" => Entity(n, EntityKind.Mutable)
-      case r"mac:(.*)$n" => Entity(n, EntityKind.Macro)
-      case r"pk:(.*)$n"  => Entity(n, EntityKind.Package)
-      case r"t:(.*)$n"   => Entity(n, EntityKind.Term)
-      case r"tr:(.*)$n"  => Entity(n, EntityKind.Trait)
-      case r"pkt:(.*)$n" => Entity(n, EntityKind.PackageType)
-      case r"o:(.*)$n"   => Entity(n, EntityKind.ModuleClass)
-      case r"cl:(.*)$n"  => Entity(n, EntityKind.Class)
-      case r"tp:(.*)$n"  => Entity(n, EntityKind.Type)
-      case _             => throw new DeserializationException("'EntityKind:Name' string expected")
+
+    private object Kind {
+      def unapply(str: String): Option[EntityKind] = str match {
+        case "ov"  => Some(EntityKind.Module)
+        case "def" => Some(EntityKind.Method)
+        case "var" => Some(EntityKind.Mutable)
+        case "mac" => Some(EntityKind.Macro)
+        case "pk"  => Some(EntityKind.Package)
+        case "t"   => Some(EntityKind.Term)
+        case "tr"  => Some(EntityKind.Trait)
+        case "pkt" => Some(EntityKind.PackageType)
+        case "o"   => Some(EntityKind.ModuleClass)
+        case "cl"  => Some(EntityKind.Class)
+        case "tp"  => Some(EntityKind.Type)
+        case _     => None
+      }
+    }
+    def read(value: JsValue) = {
+      val valueString = value.convertTo[String]
+      val idx = valueString.indexOf(':')
+      valueString.splitAt(idx) match {
+        case (Kind(kind), n) =>
+          Entity(n.tail, kind) // n includes ':' so take tail
+        case _ => throw new DeserializationException("'EntityKind:Name' string expected")
+      }
     }
   }
 
