@@ -6,7 +6,7 @@ licenses := Seq(
 homepage := Some(url("http://github.com/lightbend/scala-sculpt"))
 
 scalaVersion := crossScalaVersions.value.head
-crossScalaVersions := Seq("2.13.15", "2.12.19")
+crossScalaVersions := Seq("2.13.15", "2.12.20")
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
