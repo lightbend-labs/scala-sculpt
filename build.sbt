@@ -11,7 +11,7 @@ crossScalaVersions := Seq("2.13.14", "2.12.19")
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
   "io.spray" %% "spray-json" % "1.3.6",
-  "org.scalameta" %% "munit" % "1.0.1" % Test,
+  "org.scalameta" %% "munit" % "1.0.3" % Test,
 )
 testFrameworks += new TestFramework("munit.Framework")
 
