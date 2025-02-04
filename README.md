@@ -1,7 +1,7 @@
-# Sculpt: dependency graph extraction for Scala
+# Sculpt: dependency graph extraction for Scala 2
 
 Sculpt is a compiler plugin for analyzing the dependency structure of
-Scala source code.
+Scala 2 source code.
 
 ## Project status
 
@@ -9,9 +9,10 @@ This is **unfinished**, **unmaintained** software.  We are releasing
 it as open source as a public service with the hopes the code will be
 useful to someone.
 
-Sculpt is NOT supported under the Lightbend subscription.
+Sculpt is NOT supported under the Akka subscription.
 
 Supported Scala versions are currently 2.13.x and 2.12.x.
+(2.12.x support is likely to be discontinued.)
 
 ## What is it for?
 
@@ -339,7 +340,7 @@ Possible future directions include:
 * “what-if” analyses exploring the effect of proposed code changes
 * offer a means of declaring and enforcing desired architectural constraints (allowed and forbidden dependencies)
 
-There are tickets on some of these at https://github.com/lightbend/scala-sculpt/issues .
+There are tickets on some of these at https://github.com/lightbend-labs/scala-sculpt/issues .
 
 ## Similar/related work
 
