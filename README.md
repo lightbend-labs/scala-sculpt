@@ -1,7 +1,7 @@
 # Sculpt: dependency graph extraction for Scala 2
 
 Sculpt is a compiler plugin for analyzing the dependency structure of
-Scala 2 source code.
+Scala 2.13 source code.
 
 ## Project status
 
@@ -10,9 +10,6 @@ it as open source as a public service with the hopes the code will be
 useful to someone.
 
 Sculpt is NOT supported under the Akka subscription.
-
-Supported Scala versions are currently 2.13.x and 2.12.x.
-(2.12.x support is likely to be discontinued.)
 
 ## What is it for?
 

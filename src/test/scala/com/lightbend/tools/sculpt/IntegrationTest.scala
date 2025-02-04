@@ -8,22 +8,10 @@ import scala.tools.nsc.{Global, Settings}
 
 object Scaffold {
 
-  val classes: String = {
-    // this will be e.g. "2.11" or "2.12"
-    val majorScalaVersion = {
-      val v = scala.util.Properties.versionNumberString
-      if (v matches ".*-(pre-\\w+|M\\d+|RC\\d+)") {
-        v
-      }
-      else {
-        v.split('.').take(2).mkString(".")
-      }
-    }
-    val relative = s"./target/scala-$majorScalaVersion/classes"
-    val file = new java.io.File(relative)
-    assert(file.exists)
-    file.getAbsolutePath
-  }
+  val classes: String =
+    new java.io.File("./target/scala-2.13/classes")
+      .ensuring(_.exists)
+      .getAbsolutePath
 
   def defaultSettings: Settings = {
     val settings = new Settings
