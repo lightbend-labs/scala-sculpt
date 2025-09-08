@@ -37,11 +37,13 @@ object ClassMode {
     path.elems.span(isPackage) match {
       case (packages, next +: _) =>
         next.kind match {
+          case EntityKind.Trait =>
+            Some(Path(packages :+ next.copy(kind = EntityKind.Class)))
+          // collapse Module/ModuleClass distinction
+          case EntityKind.Module | EntityKind.ModuleClass =>
+            Some(Path(packages :+ next.copy(kind = EntityKind.Class)))
           case k if isClassKind(k) =>
             Some(Path(packages :+ next))
-          // collapse Module/ModuleClass distinction
-          case EntityKind.Module =>
-            Some(Path(packages :+ next.copy(kind = EntityKind.ModuleClass)))
           // ignore strange dependencies on bare terms;
           // see https://github.com/lightbend/scala-sculpt/issues/28
           case EntityKind.Term if packages.isEmpty =>
