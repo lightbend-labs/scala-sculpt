@@ -47,7 +47,7 @@ pomExtra := (<scm>
   <connection>scm:https://github.com/lightbend/scala-sculpt.git</connection></scm>)
 
 // configure sbt-header -- to update, run
-// `headerCreate` and `test:headerCreate`
+// `headerCreate` and `Test/headerCreate`
 headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment)
 headerLicense := Some(HeaderLicense.Custom(
   "Copyright (C) Lightbend Inc. <http://lightbend.com>"))
