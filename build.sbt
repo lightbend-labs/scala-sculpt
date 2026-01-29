@@ -48,7 +48,8 @@ pomExtra := (<scm>
 
 // configure sbt-header -- to update, run
 // `headerCreate` and `Test/headerCreate`
-headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment)
+headerMappings :=
+  headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment)
 headerLicense := Some(HeaderLicense.Custom(
   "Copyright (C) Lightbend Inc. <http://lightbend.com>"))
 
