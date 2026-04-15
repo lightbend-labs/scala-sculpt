@@ -10,7 +10,7 @@ scalaVersion := "2.13.18"
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
   "io.spray" %% "spray-json" % "1.3.6",
-  "org.scalameta" %% "munit" % "1.2.4" % Test,
+  "org.scalameta" %% "munit" % "1.3.0" % Test,
 )
 testFrameworks += new TestFramework("munit.Framework")
 
