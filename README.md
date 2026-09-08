@@ -341,6 +341,7 @@ There are tickets on some of these at https://github.com/lightbend-labs/scala-sc
 
 ## Similar/related work
 
+* https://github.com/sake92/codeps
 * https://github.com/matanster/extractor
 * https://github.com/lihaoyi/acyclic
 * https://www.jetbrains.com/help/idea/dsm-analysis.html
